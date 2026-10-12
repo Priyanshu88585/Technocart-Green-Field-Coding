@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getSettings } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
@@ -11,13 +12,16 @@ export default async function LandingPage() {
       {/* Top Navbar */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-white/20">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-white group-hover:border-white/50 transition-colors">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
+          <Link href="/" className="flex items-center gap-3.5 group">
+            <div className="w-10 h-10 rounded-xl border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center group-hover:border-white/50 transition-colors shrink-0">
+              <Image
+                src="/logo.png"
+                alt="The Grand Kitchen Logo"
+                width={40}
+                height={40}
+                className="w-full h-full object-contain p-0.5"
+                priority
+              />
             </div>
             <div>
               <span className="font-semibold text-base tracking-tight text-white block">
@@ -392,6 +396,15 @@ export default async function LandingPage() {
       <footer className="py-16 text-center border-t border-white/20 text-white/40 text-xs font-mono space-y-4">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
+            <div className="w-7 h-7 rounded-lg border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center shrink-0">
+              <Image
+                src="/logo.png"
+                alt="The Grand Kitchen Logo"
+                width={28}
+                height={28}
+                className="w-full h-full object-contain p-0.5"
+              />
+            </div>
             <span className="font-bold text-white text-sm">The Grand Kitchen</span>
             <span className="text-white/20">•</span>
             <span>Plot 42, Bandra Kurla Complex, Mumbai</span>

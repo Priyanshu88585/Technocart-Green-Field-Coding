@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { updateSettings } from "@/app/actions";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -55,6 +56,25 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
         <p className="text-xs text-white/40">
           This information appears on customer tax invoices, thermal printouts, and digital bills.
         </p>
+
+        {/* Brand Mark Display */}
+        <div className="flex items-center gap-4 p-4 rounded-xl border border-white/20 bg-white/[0.02]">
+          <div className="w-16 h-16 rounded-xl border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Restaurant Brand Logo"
+              width={64}
+              height={64}
+              className="w-full h-full object-contain p-1"
+            />
+          </div>
+          <div>
+            <div className="text-xs font-semibold text-white">Active Restaurant Brand Mark</div>
+            <div className="text-[10px] font-mono text-white/40 mt-0.5">
+              Source: /public/logo.png • Auto-synced across POS, Sidebar, and Thermal Invoices
+            </div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">

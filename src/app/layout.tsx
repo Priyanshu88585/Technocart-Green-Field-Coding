@@ -32,6 +32,11 @@ export const metadata: Metadata = {
   },
   description:
     "Architectural Restaurant CRM & POS Billing Suite. Live kitchen floor orchestration, real-time KOT dispatch, inventory catalog, and instant thermal settlement.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   robots: { index: true, follow: true },
 };
 

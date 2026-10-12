@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { loginUser } from "@/app/actions";
 import { useToast } from "@/components/ui/ToastProvider";
 
@@ -58,13 +59,16 @@ function LoginForm() {
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-white selection:text-black">
       {/* Top Navbar */}
       <header className="p-6 max-w-[1500px] w-full mx-auto flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white group-hover:border-white/40 transition-colors">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
+        <Link href="/" className="flex items-center gap-3.5 group">
+          <div className="w-10 h-10 rounded-xl border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center group-hover:border-white/50 transition-colors shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={40}
+              height={40}
+              className="w-full h-full object-contain p-0.5"
+              priority
+            />
           </div>
           <div>
             <span className="font-semibold text-sm tracking-tight text-white block">The Grand Kitchen</span>
@@ -86,18 +90,30 @@ function LoginForm() {
       {/* Center Auth Card */}
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md rounded-2xl border border-white/25 bg-background/80 backdrop-blur-xl p-8 sm:p-10 space-y-6 shadow-2xl">
-          <div className="space-y-2">
-            <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 uppercase tracking-widest">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
-              MongoDB Authenticated Session
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Restaurant Staff Login
-            </h1>
-            <p className="text-xs text-white/40 leading-relaxed">
-              Sign in with your verified credentials to access POS billing, kitchen orders, and store operations.
-            </p>
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center shrink-0 shadow-inner">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={56}
+                height={56}
+                className="w-full h-full object-contain p-1"
+                priority
+              />
+            </div>
+            <div className="space-y-1">
+              <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 uppercase tracking-widest">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
+                MongoDB Session
+              </span>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                Restaurant Staff Login
+              </h1>
+            </div>
           </div>
+          <p className="text-xs text-white/40 leading-relaxed">
+            Sign in with your verified credentials to access POS billing, kitchen orders, and store operations.
+          </p>
 
           {/* Error Banner */}
           {error && (

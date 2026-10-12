@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { formatCurrency } from "@/lib/money";
 
 interface OrderItem {
@@ -112,7 +113,16 @@ export function InvoiceClient({
       {/* The Printable Bill Container */}
       <div className="print-receipt bg-background sm:rounded-2xl border border-white/20 p-6 sm:p-10 text-white relative shadow-sm">
         {/* Restaurant Branding Header */}
-        <div className="text-center pb-6 border-b border-dashed border-white/20 print:border-black/30 space-y-1.5">
+        <div className="text-center pb-6 border-b border-dashed border-white/20 print:border-black/30 space-y-2 flex flex-col items-center">
+          <div className="w-16 h-16 rounded-2xl border border-white/20 print:border-black/20 bg-black/20 print:bg-transparent overflow-hidden flex items-center justify-center mx-auto mb-1">
+            <Image
+              src="/logo.png"
+              alt={settings.name}
+              width={64}
+              height={64}
+              className="w-full h-full object-contain p-1"
+            />
+          </div>
           <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-white print:text-black">
             {settings.name}
           </h2>
