@@ -19,9 +19,9 @@
   --destructive-foreground: oklch(0.95 0.005 270);
   --success: oklch(0.60 0.18 145);
   --warning: oklch(0.70 0.16 75);
-  --border: oklch(0.20 0.008 270);
-  --input: oklch(0.16 0.010 270);
-  --ring: oklch(0.65 0.20 265);
+  --border: rgba(255, 255, 255, 0.25);
+  --input: rgba(255, 255, 255, 0.20);
+  --ring: rgba(255, 255, 255, 0.45);
   --radius: 0.75rem;
 }
 
@@ -110,21 +110,21 @@ html {
   background: oklch(0.13 0.008 270 / 0.6);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid oklch(0.25 0.010 270 / 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
 .glass-panel {
   background: oklch(0.13 0.008 270 / 0.8);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid oklch(0.25 0.010 270 / 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .glass-subtle {
   background: oklch(0.13 0.008 270 / 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid oklch(0.22 0.008 270 / 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .section-label {

@@ -42,9 +42,9 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
       {/* Restaurant Profile Card */}
-      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm space-y-4">
+      <div className="p-6 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm space-y-4">
         <div className="flex items-center gap-2">
-          <span className="w-6 h-px bg-white/20" />
+          <span className="w-6 h-px bg-white/30" />
           <span className="text-[10px] font-mono tracking-widest uppercase text-white/40">
             01 // PROFILE
           </span>
@@ -66,7 +66,7 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
               required
               value={settings.name}
               onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
 
@@ -78,7 +78,7 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
               type="text"
               value={settings.address}
               onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
 
@@ -90,7 +90,7 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
               type="text"
               value={settings.phone}
               onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white font-mono focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white font-mono focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
 
@@ -102,16 +102,16 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
               type="email"
               value={settings.email}
               onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white font-mono focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white font-mono focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
         </div>
       </div>
 
       {/* Taxation & Billing Rates */}
-      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm space-y-4">
+      <div className="p-6 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm space-y-4">
         <div className="flex items-center gap-2">
-          <span className="w-6 h-px bg-white/20" />
+          <span className="w-6 h-px bg-white/30" />
           <span className="text-[10px] font-mono tracking-widest uppercase text-white/40">
             02 // TAX & COMPLIANCE
           </span>
@@ -133,7 +133,7 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
               placeholder="e.g. 27AAAAA0000A1Z5"
               value={settings.gstNumber}
               onChange={(e) => setSettings({ ...settings, gstNumber: e.target.value })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs font-mono text-white focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs font-mono text-white focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
 
@@ -148,7 +148,7 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
               max="100"
               value={settings.defaultTax}
               onChange={(e) => setSettings({ ...settings, defaultTax: parseFloat(e.target.value) || 0 })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs font-mono text-white focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs font-mono text-white focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
 
@@ -163,16 +163,16 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
               max="100"
               value={settings.defaultService}
               onChange={(e) => setSettings({ ...settings, defaultService: parseFloat(e.target.value) || 0 })}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs font-mono text-white focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs font-mono text-white focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
         </div>
       </div>
 
       {/* Thermal Receipt Customization */}
-      <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm space-y-4">
+      <div className="p-6 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm space-y-4">
         <div className="flex items-center gap-2">
-          <span className="w-6 h-px bg-white/20" />
+          <span className="w-6 h-px bg-white/30" />
           <span className="text-[10px] font-mono tracking-widest uppercase text-white/40">
             03 // THERMAL FOOTER
           </span>
@@ -190,7 +190,7 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
             value={settings.receiptFooter}
             onChange={(e) => setSettings({ ...settings, receiptFooter: e.target.value })}
             placeholder="e.g. Thank you for dining with us! Please visit again."
-            className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white focus:outline-none focus:border-white/50 transition-colors"
           />
         </div>
       </div>

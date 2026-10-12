@@ -15,10 +15,10 @@ export default async function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-white selection:text-black">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-white/10">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-white/20">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-8 h-8 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white group-hover:border-white/40 transition-colors">
+            <div className="w-8 h-8 rounded-lg border border-white/20 bg-white/5 flex items-center justify-center text-white group-hover:border-white/50 transition-colors">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 2L2 7l10 5 10-5-10-5z" />
                 <path d="M2 17l10 5 10-5" />
@@ -46,7 +46,7 @@ export default async function LandingPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="px-5 py-2.5 bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all rounded-xl whitespace-nowrap flex items-center gap-2"
+              className="px-5 py-2.5 bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all rounded-xl whitespace-nowrap flex items-center gap-2 shadow-sm"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
@@ -60,12 +60,12 @@ export default async function LandingPage() {
       </header>
 
       {/* Hero Section (Architectural Portfolio Theme) */}
-      <section className="relative pt-24 pb-20 lg:pt-36 lg:pb-32 overflow-hidden border-b border-white/10">
+      <section className="relative pt-24 pb-20 lg:pt-36 lg:pb-32 overflow-hidden border-b border-white/20">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
           {/* Eyebrow Label with divider line */}
           <div className="mb-8">
             <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 tracking-widest uppercase">
-              <span className="w-12 h-px bg-white/20" />
+              <span className="w-12 h-px bg-white/30" />
               Haute Gastronomy &amp; Enterprise POS
               <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)] animate-pulse" />
             </span>
@@ -91,7 +91,7 @@ export default async function LandingPage() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 max-w-md sm:max-w-none">
             <Link
               href="/login"
-              className="px-8 py-4 bg-white text-black text-sm font-semibold hover:bg-white/90 transition-all flex items-center justify-center gap-2.5 rounded-xl whitespace-nowrap"
+              className="px-8 py-4 bg-white text-black text-sm font-semibold hover:bg-white/90 transition-all flex items-center justify-center gap-2.5 rounded-xl whitespace-nowrap shadow-sm"
             >
               <span>Launch POS Terminal</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -102,21 +102,21 @@ export default async function LandingPage() {
 
             <a
               href="#menu"
-              className="px-8 py-4 border border-white/10 bg-white/5 text-white text-sm font-semibold hover:bg-white/10 hover:border-white/20 transition-all backdrop-blur-sm flex items-center justify-center gap-2 rounded-xl whitespace-nowrap"
+              className="px-8 py-4 border border-white/20 bg-white/5 text-white text-sm font-semibold hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm flex items-center justify-center gap-2 rounded-xl whitespace-nowrap"
             >
               <span>Explore Live Menu ({items.length})</span>
             </a>
 
             <a
               href="#credentials"
-              className="px-6 py-4 border border-white/10 bg-transparent text-white/60 hover:text-white hover:border-white/30 text-sm font-mono transition-all flex items-center justify-center gap-2 rounded-xl whitespace-nowrap"
+              className="px-6 py-4 border border-white/20 bg-transparent text-white/60 hover:text-white hover:border-white/40 text-sm font-mono transition-all flex items-center justify-center gap-2 rounded-xl whitespace-nowrap"
             >
               Demo Credentials &darr;
             </a>
           </div>
 
           {/* Hero Numbers Strip (Portfolio Style) */}
-          <div className="flex flex-wrap items-start mt-16 lg:mt-24 gap-10 sm:gap-14 lg:gap-20 border-t border-white/10 pt-10">
+          <div className="flex flex-wrap items-start mt-16 lg:mt-24 gap-10 sm:gap-14 lg:gap-20 border-t border-white/20 pt-10">
             <div className="flex flex-col gap-1.5">
               <span className="text-3xl sm:text-4xl lg:text-5xl font-mono font-bold text-white">100%</span>
               <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest font-mono">
@@ -146,11 +146,11 @@ export default async function LandingPage() {
       </section>
 
       {/* Verified Staff Credentials Section (Requested in Hero area) */}
-      <section id="credentials" className="py-20 lg:py-28 border-b border-white/10 bg-background/50">
+      <section id="credentials" className="py-20 lg:py-28 border-b border-white/20 bg-background/50">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
           <div className="mb-12">
             <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 mb-3 tracking-widest uppercase">
-              <span className="w-12 h-px bg-white/20" />
+              <span className="w-12 h-px bg-white/30" />
               Verified Access Controls
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
@@ -163,13 +163,13 @@ export default async function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
             {/* Store Manager Card */}
-            <div className="p-8 rounded-2xl border border-white/15 bg-background/60 backdrop-blur-sm space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+            <div className="p-8 rounded-2xl border border-white/25 bg-background/60 backdrop-blur-sm space-y-6 shadow-lg">
+              <div className="flex items-center justify-between pb-4 border-b border-white/20">
                 <div>
                   <span className="text-xs font-mono uppercase tracking-widest text-white/40 block">Role</span>
                   <h3 className="text-xl font-bold text-white mt-0.5">Store Manager (Admin)</h3>
                 </div>
-                <span className="px-2.5 py-1 rounded-full text-xs font-mono border border-white/15 bg-white/5 text-white/80">
+                <span className="px-2.5 py-1 rounded-full text-xs font-mono border border-white/20 bg-white/5 text-white/80">
                   FULL ACCESS
                 </span>
               </div>
@@ -177,14 +177,14 @@ export default async function LandingPage() {
               <div className="space-y-3 font-mono text-xs">
                 <div>
                   <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-1">Work Email / Login ID</span>
-                  <div className="p-3 rounded-xl border border-white/10 bg-white/[0.02] text-white font-semibold select-all">
+                  <div className="p-3 rounded-xl border border-white/20 bg-white/[0.02] text-white font-semibold select-all">
                     admin@thegrandkitchen.com
                   </div>
                 </div>
 
                 <div>
                   <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-1">Secure Password</span>
-                  <div className="p-3 rounded-xl border border-white/10 bg-white/[0.02] text-white font-semibold select-all">
+                  <div className="p-3 rounded-xl border border-white/20 bg-white/[0.02] text-white font-semibold select-all">
                     GrandAdmin123!
                   </div>
                 </div>
@@ -193,7 +193,7 @@ export default async function LandingPage() {
               <div className="pt-2">
                 <Link
                   href="/login"
-                  className="w-full py-3 bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all rounded-xl flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all rounded-xl flex items-center justify-center gap-2 shadow-sm"
                 >
                   Sign In as Store Manager &rarr;
                 </Link>
@@ -201,13 +201,13 @@ export default async function LandingPage() {
             </div>
 
             {/* Billing Cashier Card */}
-            <div className="p-8 rounded-2xl border border-white/15 bg-background/60 backdrop-blur-sm space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+            <div className="p-8 rounded-2xl border border-white/25 bg-background/60 backdrop-blur-sm space-y-6 shadow-lg">
+              <div className="flex items-center justify-between pb-4 border-b border-white/20">
                 <div>
                   <span className="text-xs font-mono uppercase tracking-widest text-white/40 block">Role</span>
                   <h3 className="text-xl font-bold text-white mt-0.5">Billing Cashier (POS)</h3>
                 </div>
-                <span className="px-2.5 py-1 rounded-full text-xs font-mono border border-white/15 bg-white/5 text-white/80">
+                <span className="px-2.5 py-1 rounded-full text-xs font-mono border border-white/20 bg-white/5 text-white/80">
                   POS OPERATOR
                 </span>
               </div>
@@ -215,14 +215,14 @@ export default async function LandingPage() {
               <div className="space-y-3 font-mono text-xs">
                 <div>
                   <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-1">Work Email / Login ID</span>
-                  <div className="p-3 rounded-xl border border-white/10 bg-white/[0.02] text-white font-semibold select-all">
+                  <div className="p-3 rounded-xl border border-white/20 bg-white/[0.02] text-white font-semibold select-all">
                     cashier@thegrandkitchen.com
                   </div>
                 </div>
 
                 <div>
                   <span className="text-white/40 block text-[10px] uppercase tracking-wider mb-1">Secure Password</span>
-                  <div className="p-3 rounded-xl border border-white/10 bg-white/[0.02] text-white font-semibold select-all">
+                  <div className="p-3 rounded-xl border border-white/20 bg-white/[0.02] text-white font-semibold select-all">
                     Cashier123!
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export default async function LandingPage() {
               <div className="pt-2">
                 <Link
                   href="/login"
-                  className="w-full py-3 border border-white/15 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold transition-all rounded-xl flex items-center justify-center gap-2"
+                  className="w-full py-3 border border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40 text-white text-xs font-semibold transition-all rounded-xl flex items-center justify-center gap-2"
                 >
                   Sign In as Cashier &rarr;
                 </Link>
@@ -242,12 +242,12 @@ export default async function LandingPage() {
       </section>
 
       {/* Culinary Menu Showcase (Direct from MongoDB) */}
-      <section id="menu" className="py-24 lg:py-32 border-b border-white/10">
+      <section id="menu" className="py-24 lg:py-32 border-b border-white/20">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
             <div>
               <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 mb-3 tracking-widest uppercase">
-                <span className="w-12 h-px bg-white/20" />
+                <span className="w-12 h-px bg-white/30" />
                 Artisanal Kitchen Ledger
               </span>
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
@@ -259,13 +259,13 @@ export default async function LandingPage() {
             </div>
 
             <div className="flex items-center gap-2 overflow-x-auto pb-2">
-              <span className="px-3 py-1.5 rounded-full text-xs font-mono bg-white text-black font-semibold">
+              <span className="px-3 py-1.5 rounded-full text-xs font-mono bg-white text-black font-semibold shadow-sm">
                 All ({items.length})
               </span>
               {categories.map((cat) => (
                 <span
                   key={cat}
-                  className="px-3 py-1.5 rounded-full text-xs font-mono border border-white/10 bg-white/5 text-white/60 hover:text-white transition-colors"
+                  className="px-3 py-1.5 rounded-full text-xs font-mono border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors"
                 >
                   {cat}
                 </span>
@@ -279,7 +279,7 @@ export default async function LandingPage() {
               return (
                 <div
                   key={item.id}
-                  className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm hover:border-white/30 transition-all flex flex-col justify-between space-y-6 group"
+                  className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm hover:border-white/40 transition-all flex flex-col justify-between space-y-6 group shadow-sm"
                 >
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -308,7 +308,7 @@ export default async function LandingPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                  <div className="flex items-center justify-between pt-4 border-t border-white/20">
                     <span className="text-xs font-mono uppercase tracking-wider text-white/40">
                       {item.category}
                     </span>
@@ -324,12 +324,12 @@ export default async function LandingPage() {
       </section>
 
       {/* Culinary Heritage & Craft Section (Portfolio Two-Column Style) */}
-      <section id="about" className="py-24 lg:py-32 border-b border-white/10">
+      <section id="about" className="py-24 lg:py-32 border-b border-white/20">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
             <div>
               <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 mb-6 tracking-widest uppercase">
-                <span className="w-12 h-px bg-white/20" />
+                <span className="w-12 h-px bg-white/30" />
                 The Gastronomic Standard
               </span>
               <h2 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-white leading-tight mb-8">
@@ -343,12 +343,12 @@ export default async function LandingPage() {
                 Every grain of aged basmati rice is slow-steamed under dough-sealed purdah. Every table ticket is digitally dispatched to kitchen screens in under 50ms.
               </p>
 
-              <div className="p-6 rounded-2xl border border-white/10 bg-white/[0.02] space-y-4">
+              <div className="p-6 rounded-2xl border border-white/20 bg-white/[0.02] space-y-4 shadow-sm">
                 <div className="flex items-center gap-3 text-white font-mono text-xs uppercase tracking-wider">
                   <span className="w-2 h-2 rounded-full bg-emerald-400" />
                   <span>Certified Food Safety &amp; Legal Compliance</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-xs font-mono text-white/50 pt-2 border-t border-white/10">
+                <div className="grid grid-cols-2 gap-4 text-xs font-mono text-white/50 pt-2 border-t border-white/20">
                   <div>
                     <span className="text-white/30 block text-[10px]">GSTIN NUMBER</span>
                     <span className="text-white font-semibold">27AAACG0123M1Z5</span>
@@ -386,13 +386,13 @@ export default async function LandingPage() {
               ].map((item) => (
                 <div
                   key={item.idx}
-                  className="p-8 rounded-2xl border border-white/10 bg-background/50 hover:border-white/30 transition-all space-y-3"
+                  className="p-8 rounded-2xl border border-white/20 bg-background/50 hover:border-white/40 transition-all space-y-3 shadow-sm"
                 >
                   <div className="flex items-center gap-4">
                     <span className="text-2xl font-mono font-medium text-white/30">
                       {item.idx}
                     </span>
-                    <div className="flex-1 h-px bg-white/10" />
+                    <div className="flex-1 h-px bg-white/20" />
                   </div>
                   <h3 className="text-xl font-bold text-white">{item.title}</h3>
                   <p className="text-xs sm:text-sm text-white/40 leading-relaxed">
@@ -406,13 +406,13 @@ export default async function LandingPage() {
       </section>
 
       {/* Reservation Inquiry Form */}
-      <section id="reserve" className="py-24 lg:py-32 border-b border-white/10">
+      <section id="reserve" className="py-24 lg:py-32 border-b border-white/20">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
           <div className="max-w-2xl mx-auto text-center space-y-4 mb-16">
             <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 tracking-widest uppercase">
-              <span className="w-12 h-px bg-white/20" />
+              <span className="w-12 h-px bg-white/30" />
               Private Dining &amp; Events
-              <span className="w-12 h-px bg-white/20" />
+              <span className="w-12 h-px bg-white/30" />
             </span>
             <h2 className="text-4xl sm:text-5xl font-bold tracking-tight text-white">
               Reserve Your Table.
@@ -422,14 +422,14 @@ export default async function LandingPage() {
             </p>
           </div>
 
-          <div className="max-w-2xl mx-auto p-8 sm:p-10 rounded-2xl border border-white/15 bg-background/60 backdrop-blur-sm space-y-6">
+          <div className="max-w-2xl mx-auto p-8 sm:p-10 rounded-2xl border border-white/25 bg-background/60 backdrop-blur-sm space-y-6 shadow-xl">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-mono uppercase tracking-wider text-white/50">Guest Name</label>
                 <input
                   type="text"
                   placeholder="Vikramaditya Roy"
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/40 outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/50 outline-none transition-colors"
                 />
               </div>
               <div className="space-y-1.5">
@@ -437,7 +437,7 @@ export default async function LandingPage() {
                 <input
                   type="tel"
                   placeholder="+91 98200 12345"
-                  className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/40 outline-none transition-colors"
+                  className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/50 outline-none transition-colors"
                 />
               </div>
             </div>
@@ -445,7 +445,7 @@ export default async function LandingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-mono uppercase tracking-wider text-white/50">Party Size</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-white/10 bg-background text-sm text-white focus:border-white/40 outline-none transition-colors">
+                <select className="w-full px-4 py-3 rounded-xl border border-white/20 bg-background text-sm text-white focus:border-white/50 outline-none transition-colors">
                   <option value="2">2 Guests (Intimate)</option>
                   <option value="4">4 Guests (Standard)</option>
                   <option value="6">6 Guests (Booth)</option>
@@ -454,7 +454,7 @@ export default async function LandingPage() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-mono uppercase tracking-wider text-white/50">Preferred Dining Slot</label>
-                <select className="w-full px-4 py-3 rounded-xl border border-white/10 bg-background text-sm text-white focus:border-white/40 outline-none transition-colors">
+                <select className="w-full px-4 py-3 rounded-xl border border-white/20 bg-background text-sm text-white focus:border-white/50 outline-none transition-colors">
                   <option value="lunch">Lunch Service (12:30 PM - 3:30 PM)</option>
                   <option value="dinner">Dinner Service (7:00 PM - 11:30 PM)</option>
                   <option value="late">Late Night Tasting (10:30 PM onwards)</option>
@@ -467,13 +467,13 @@ export default async function LandingPage() {
               <textarea
                 rows={3}
                 placeholder="Allergies, anniversary arrangements, wine pairings..."
-                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/40 outline-none transition-colors resize-none"
+                className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/50 outline-none transition-colors resize-none"
               />
             </div>
 
             <button
               type="button"
-              className="w-full py-4 bg-white text-black font-semibold text-sm rounded-xl hover:bg-white/90 transition-all flex items-center justify-center gap-2"
+              className="w-full py-4 bg-white text-black font-semibold text-sm rounded-xl hover:bg-white/90 transition-all flex items-center justify-center gap-2 shadow-sm"
             >
               Confirm Reservation Request &rarr;
             </button>
@@ -482,7 +482,7 @@ export default async function LandingPage() {
       </section>
 
       {/* Minimalist Footer */}
-      <footer className="py-16 text-center border-t border-white/10 text-white/40 text-xs font-mono space-y-4">
+      <footer className="py-16 text-center border-t border-white/20 text-white/40 text-xs font-mono space-y-4">
         <div className="max-w-[1500px] mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <span className="font-bold text-white text-sm">The Grand Kitchen</span>

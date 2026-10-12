@@ -74,7 +74,7 @@ function LoginForm() {
 
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono text-white/60 hover:text-white border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono text-white/60 hover:text-white border border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40 transition-all"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
@@ -85,7 +85,7 @@ function LoginForm() {
 
       {/* Center Auth Card */}
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md rounded-2xl border border-white/15 bg-background/70 backdrop-blur-xl p-8 sm:p-10 space-y-6">
+        <div className="w-full max-w-md rounded-2xl border border-white/25 bg-background/80 backdrop-blur-xl p-8 sm:p-10 space-y-6 shadow-2xl">
           <div className="space-y-2">
             <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
@@ -101,7 +101,7 @@ function LoginForm() {
 
           {/* Error Banner */}
           {error && (
-            <div className="p-3.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 text-xs font-mono flex items-center gap-2.5">
+            <div className="p-3.5 rounded-xl border border-red-500/40 bg-red-500/10 text-red-300 text-xs font-mono flex items-center gap-2.5">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />
@@ -112,7 +112,7 @@ function LoginForm() {
           )}
 
           {/* Quick-Fill Demo Credentials Selector */}
-          <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-2.5">
+          <div className="p-4 rounded-xl border border-white/20 bg-white/[0.02] space-y-2.5">
             <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-white/40">
               <span>Quick Demo Accounts</span>
               <span className="text-white/60">Click to Autofill</span>
@@ -121,7 +121,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => handleFillCredentials("admin@thegrandkitchen.com", "GrandAdmin123!")}
-                className="p-3 rounded-xl border border-white/10 bg-white/5 hover:border-white/30 text-left transition-all"
+                className="p-3 rounded-xl border border-white/20 bg-white/5 hover:border-white/40 text-left transition-all"
               >
                 <div className="text-xs font-semibold text-white flex items-center justify-between">
                   <span>Store Manager</span>
@@ -133,7 +133,7 @@ function LoginForm() {
               <button
                 type="button"
                 onClick={() => handleFillCredentials("cashier@thegrandkitchen.com", "Cashier123!")}
-                className="p-3 rounded-xl border border-white/10 bg-white/5 hover:border-white/30 text-left transition-all"
+                className="p-3 rounded-xl border border-white/20 bg-white/5 hover:border-white/40 text-left transition-all"
               >
                 <div className="text-xs font-semibold text-white flex items-center justify-between">
                   <span>Billing Cashier</span>
@@ -156,7 +156,7 @@ function LoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@thegrandkitchen.com"
-                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/40 outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/50 outline-none transition-colors"
               />
             </div>
 
@@ -179,14 +179,14 @@ function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/40 outline-none transition-colors"
+                className="w-full px-4 py-3 rounded-xl border border-white/20 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/50 outline-none transition-colors"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl bg-white text-black text-sm font-semibold hover:bg-white/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 px-4 rounded-xl bg-white text-black text-sm font-semibold hover:bg-white/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
             >
               {loading ? (
                 <>
@@ -209,7 +209,7 @@ function LoginForm() {
           </form>
 
           {/* Security Notice */}
-          <div className="pt-2 border-t border-white/10 text-center">
+          <div className="pt-2 border-t border-white/20 text-center">
             <p className="text-[10px] font-mono text-white/40">
               Encrypted session cookies with MongoDB user role verification.
             </p>

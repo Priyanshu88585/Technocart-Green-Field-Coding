@@ -182,7 +182,7 @@ export function OrderDetailClient({
   return (
     <div className="space-y-6 max-w-5xl mx-auto text-white">
       {/* Top Details Header Card */}
-      <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-mono font-bold text-white">
@@ -191,10 +191,10 @@ export function OrderDetailClient({
             <span
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${
                 order.status === "completed"
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
                   : order.status === "active"
-                  ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
-                  : "border-red-500/30 bg-red-500/10 text-red-400"
+                  ? "border-amber-400/50 bg-amber-400/10 text-amber-300"
+                  : "border-red-500/40 bg-red-500/10 text-red-400"
               }`}
             >
               {order.status === "active" && (
@@ -220,7 +220,7 @@ export function OrderDetailClient({
               </strong>
             </span>
             {order.note && (
-              <span className="text-white/80 border border-white/10 bg-white/5 px-2 py-0.5 rounded">
+              <span className="text-white/80 border border-white/20 bg-white/5 px-2 py-0.5 rounded">
                 CRM: {order.note}
               </span>
             )}
@@ -231,7 +231,7 @@ export function OrderDetailClient({
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href={`/billing/${order.id}`}
-            className="px-4 py-2 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all flex items-center gap-2"
+            className="px-4 py-2 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all flex items-center gap-2 shadow-sm"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="6 9 6 2 18 2 18 9" />
@@ -245,13 +245,13 @@ export function OrderDetailClient({
             <>
               <button
                 onClick={() => handleStatusUpdate("completed")}
-                className="px-4 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold text-xs transition-colors"
+                className="px-4 py-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold text-xs transition-colors"
               >
                 ✓ Mark Completed
               </button>
               <button
                 onClick={() => handleStatusUpdate("cancelled")}
-                className="px-4 py-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300 font-semibold text-xs transition-colors"
+                className="px-4 py-2 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 text-red-300 font-semibold text-xs transition-colors"
               >
                 Cancel Order
               </button>
@@ -263,7 +263,7 @@ export function OrderDetailClient({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Ordered Items List & Add Item (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md space-y-4">
+          <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">
                 Ordered Dishes ({order.items.length})
@@ -287,7 +287,7 @@ export function OrderDetailClient({
             {showAddItem && (
               <form
                 onSubmit={handleAddItem}
-                className="p-4 rounded-xl border border-white/15 bg-white/[0.02] space-y-3"
+                className="p-4 rounded-xl border border-white/20 bg-white/[0.02] space-y-3"
               >
                 <div className="text-xs font-mono uppercase tracking-wider text-white/50">
                   Select Menu Dish to Append
@@ -297,7 +297,7 @@ export function OrderDetailClient({
                     <select
                       value={selectedMenuItemId}
                       onChange={(e) => setSelectedMenuItemId(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-background text-xs text-white focus:border-white/40 outline-none font-mono"
+                      className="w-full px-3 py-2 rounded-lg border border-white/20 bg-background text-xs text-white focus:border-white/50 outline-none font-mono transition-colors"
                     >
                       {menuItems.map((item) => (
                         <option key={item.id} value={item.id}>
@@ -313,12 +313,12 @@ export function OrderDetailClient({
                       max="99"
                       value={addQuantity}
                       onChange={(e) => setAddQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-16 px-2.5 py-2 rounded-lg border border-white/10 bg-background text-xs text-white text-center focus:border-white/40 outline-none font-mono"
+                      className="w-16 px-2.5 py-2 rounded-lg border border-white/20 bg-background text-xs text-white text-center focus:border-white/50 outline-none font-mono transition-colors"
                     />
                     <button
                       type="submit"
                       disabled={isAddingItem}
-                      className="flex-1 py-2 rounded-lg bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all"
+                      className="flex-1 py-2 rounded-lg bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all shadow-sm"
                     >
                       {isAddingItem ? "Adding..." : "+ Append"}
                     </button>
@@ -331,14 +331,14 @@ export function OrderDetailClient({
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px] font-mono">
+                  <tr className="border-b border-white/20 text-white/40 uppercase tracking-widest text-[10px] font-mono">
                     <th className="pb-3 font-semibold">Dish Item</th>
                     <th className="pb-3 font-semibold text-center">Qty</th>
                     <th className="pb-3 font-semibold text-right">Rate</th>
                     <th className="pb-3 font-semibold text-right">Line Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 font-mono">
+                <tbody className="divide-y divide-white/10 font-mono">
                   {order.items.map((item) => (
                     <tr key={item.id} className="hover:bg-white/[0.02] transition-colors">
                       <td className="py-3 font-sans font-semibold text-white">{item.itemName}</td>
@@ -359,7 +359,7 @@ export function OrderDetailClient({
           </div>
 
           {/* Payment History & Settlement */}
-          <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md space-y-4">
+          <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">
                 Payment History & Settlement
@@ -367,8 +367,8 @@ export function OrderDetailClient({
               <span
                 className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full border ${
                   balanceRemaining === 0
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                    : "border-amber-400/30 bg-amber-400/10 text-amber-300"
+                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+                    : "border-amber-400/50 bg-amber-400/10 text-amber-300"
                 }`}
               >
                 {balanceRemaining === 0 ? "Fully Paid" : `Due: ${formatCurrency(balanceRemaining)}`}
@@ -379,14 +379,14 @@ export function OrderDetailClient({
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono">
                   <thead>
-                    <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px]">
+                    <tr className="border-b border-white/20 text-white/40 uppercase tracking-widest text-[10px]">
                       <th className="pb-2 font-semibold">Method</th>
                       <th className="pb-2 font-semibold">Amount</th>
                       <th className="pb-2 font-semibold">Reference</th>
                       <th className="pb-2 font-semibold text-right">Timestamp</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-white/10">
                     {order.payments.map((p) => (
                       <tr key={p.id}>
                         <td className="py-2.5 font-semibold capitalize text-white">
@@ -417,7 +417,7 @@ export function OrderDetailClient({
             {balanceRemaining > 0 && order.status !== "cancelled" && (
               <form
                 onSubmit={handleRecordPayment}
-                className="pt-4 border-t border-white/10 space-y-3"
+                className="pt-4 border-t border-white/20 space-y-3"
               >
                 <div className="text-xs font-mono uppercase tracking-wider text-white/50">
                   Record Settlement Payment
@@ -431,7 +431,7 @@ export function OrderDetailClient({
                     <select
                       value={paymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-background text-xs text-white focus:border-white/40 outline-none font-mono"
+                      className="w-full px-3 py-2 rounded-lg border border-white/20 bg-background text-xs text-white focus:border-white/50 outline-none font-mono transition-colors"
                     >
                       <option value="cash">💵 Cash</option>
                       <option value="upi">📱 UPI / QR</option>
@@ -451,7 +451,7 @@ export function OrderDetailClient({
                       max={balanceRemaining / 100}
                       value={paymentAmountRupees}
                       onChange={(e) => setPaymentAmountRupees(parseFloat(e.target.value) || 0)}
-                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/[0.02] text-xs font-mono text-white focus:border-white/40 outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-white/20 bg-white/[0.02] text-xs font-mono text-white focus:border-white/50 outline-none transition-colors"
                     />
                   </div>
 
@@ -464,7 +464,7 @@ export function OrderDetailClient({
                       placeholder="e.g. UPI Ref / Cashier ID"
                       value={paymentRef}
                       onChange={(e) => setPaymentRef(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/[0.02] text-xs text-white focus:border-white/40 outline-none font-mono"
+                      className="w-full px-3 py-2 rounded-lg border border-white/20 bg-white/[0.02] text-xs text-white focus:border-white/50 outline-none font-mono transition-colors"
                     />
                   </div>
                 </div>
@@ -472,7 +472,7 @@ export function OrderDetailClient({
                 <button
                   type="submit"
                   disabled={isPaying}
-                  className="w-full py-2.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all disabled:opacity-40"
+                  className="w-full py-2.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all disabled:opacity-40 shadow-sm"
                 >
                   {isPaying ? "Recording Payment..." : "Record Payment & Settle Ticket"}
                 </button>
@@ -483,7 +483,7 @@ export function OrderDetailClient({
 
         {/* Right Column: Financial Calculation Summary Card (1 col) */}
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md space-y-4">
+          <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm space-y-4">
             <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">
               Bill Ledger
             </h2>
@@ -521,7 +521,7 @@ export function OrderDetailClient({
                 </div>
               )}
 
-              <div className="pt-3 border-t border-white/10 flex items-baseline justify-between">
+              <div className="pt-3 border-t border-white/20 flex items-baseline justify-between">
                 <span className="text-xs uppercase tracking-widest text-white/40">
                   Grand Total
                 </span>
@@ -530,7 +530,7 @@ export function OrderDetailClient({
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-white/5 flex justify-between text-xs text-white/50">
+              <div className="pt-2 border-t border-white/20 flex justify-between text-xs text-white/50">
                 <span>Total Paid</span>
                 <span className="text-emerald-400 font-semibold">
                   {formatCurrency(totalPaid)}
@@ -545,10 +545,10 @@ export function OrderDetailClient({
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t border-white/20">
               <Link
                 href={`/billing/${order.id}`}
-                className="w-full py-2.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all flex items-center justify-center gap-2 shadow-sm"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="6 9 6 2 18 2 18 9" />

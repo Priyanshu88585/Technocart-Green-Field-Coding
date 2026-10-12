@@ -89,7 +89,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
   return (
     <div className="space-y-6 text-white max-w-[1500px] mx-auto">
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm">
         {/* Status Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
@@ -106,7 +106,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                   active
                     ? "bg-white text-black shadow-sm"
-                    : "border border-white/10 bg-white/5 text-white/50 hover:text-white"
+                    : "border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40"
                 }`}
               >
                 {tab.label}
@@ -120,7 +120,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="px-3 py-1.5 rounded-xl border border-white/10 bg-background text-xs text-white/80 focus:border-white/40 outline-none font-mono"
+            className="px-3 py-1.5 rounded-xl border border-white/20 bg-background text-xs text-white/80 focus:border-white/50 outline-none font-mono transition-colors"
           >
             <option value="all">All Types</option>
             <option value="dine-in">Dine-In</option>
@@ -145,7 +145,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
               placeholder="Search by #, table, guest..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.02] text-xs text-white placeholder-white/30 focus:border-white/40 outline-none font-mono"
+              className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-white/20 bg-white/[0.02] text-xs text-white placeholder-white/30 focus:border-white/50 outline-none font-mono transition-colors"
             />
           </div>
         </div>
@@ -153,8 +153,8 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
 
       {/* Orders Table / Cards */}
       {filteredOrders.length === 0 ? (
-        <div className="p-12 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm text-center space-y-3">
-          <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/5 flex items-center justify-center mx-auto text-white/40 font-mono">
+        <div className="p-12 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm text-center space-y-3">
+          <div className="w-10 h-10 rounded-xl border border-white/25 bg-white/5 flex items-center justify-center mx-auto text-white/60 font-mono">
             ∅
           </div>
           <p className="text-sm font-semibold text-white">No orders matching your criteria</p>
@@ -163,11 +163,11 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md overflow-hidden">
+        <div className="rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px] font-mono bg-white/[0.02]">
+                <tr className="border-b border-white/20 text-white/40 uppercase tracking-widest text-[10px] font-mono bg-white/[0.02]">
                   <th className="py-3.5 px-4 font-semibold">Order</th>
                   <th className="py-3.5 px-4 font-semibold">Type</th>
                   <th className="py-3.5 px-4 font-semibold">Table / Guest</th>
@@ -178,7 +178,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                   <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 font-mono">
+              <tbody className="divide-y divide-white/10 font-mono">
                 {filteredOrders.map((order) => {
                   const dateStr = new Date(order.createdAt).toLocaleTimeString("en-IN", {
                     hour: "2-digit",
@@ -195,7 +195,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                       </td>
 
                       <td className="py-4 px-4">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider border border-white/10 bg-white/5 text-white/70">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider border border-white/20 bg-white/5 text-white/80">
                           {order.orderType}
                         </span>
                       </td>
@@ -230,10 +230,10 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                         <span
                           className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider border ${
                             order.status === "completed"
-                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                              ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
                               : order.status === "active"
-                              ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
-                              : "border-red-500/30 bg-red-500/10 text-red-400"
+                              ? "border-amber-400/50 bg-amber-400/10 text-amber-300"
+                              : "border-red-500/40 bg-red-500/10 text-red-400"
                           }`}
                         >
                           {order.status === "active" && (
@@ -247,7 +247,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/orders/${order.id}`}
-                            className="px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium text-xs transition-colors"
+                            className="px-2.5 py-1 rounded-lg border border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40 text-white font-medium text-xs transition-colors"
                           >
                             KOT
                           </Link>

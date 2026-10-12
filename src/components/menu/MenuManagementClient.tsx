@@ -183,7 +183,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
   return (
     <div className="space-y-6">
       {/* Header Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm">
         {/* Categories */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {categories.map((cat) => {
@@ -195,7 +195,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                   active
                     ? "bg-white text-black font-semibold shadow-sm"
-                    : "bg-white/[0.02] border border-white/10 text-white/50 hover:text-white hover:border-white/20"
+                    : "bg-white/5 border border-white/20 text-white/60 hover:text-white hover:border-white/40"
                 }`}
               >
                 {cat}
@@ -224,7 +224,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
               placeholder="Search catalog..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-colors"
+              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition-colors"
             />
           </div>
 
@@ -248,8 +248,8 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
             key={item.id}
             className={`p-5 rounded-2xl border backdrop-blur-sm transition-all flex flex-col justify-between space-y-4 ${
               !item.available
-                ? "bg-white/[0.01] border-white/5 opacity-60"
-                : "bg-white/[0.02] border-white/10 hover:border-white/25"
+                ? "bg-white/[0.01] border-white/10 opacity-60"
+                : "bg-background/50 border-white/20 hover:border-white/40 shadow-sm"
             }`}
           >
             <div>
@@ -263,8 +263,8 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   onClick={() => handleToggleAvailability(item)}
                   className={`px-2 py-0.5 rounded-md text-[10px] font-mono uppercase tracking-wider transition-colors border ${
                     item.available
-                      ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20"
-                      : "bg-rose-500/10 text-rose-300 border-rose-500/30 hover:bg-rose-500/20"
+                      ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/20"
+                      : "bg-rose-500/10 text-rose-300 border-rose-500/40 hover:bg-rose-500/20"
                   }`}
                   title="Click to toggle availability"
                 >
@@ -280,7 +280,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
               )}
             </div>
 
-            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
+            <div className="pt-3 border-t border-white/20 flex items-center justify-between">
               <span className="text-base font-bold text-white font-mono">
                 {formatCurrency(item.priceInPaise)}
               </span>
@@ -288,7 +288,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => openEditModal(item)}
-                  className="px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-white/70 text-xs font-mono transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/40 text-white text-xs font-mono transition-colors"
                 >
                   Edit
                 </button>
@@ -311,10 +311,10 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
       {/* Add / Edit Dish Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-md p-6 rounded-2xl bg-[#0c0d12] border border-white/15 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <div className="w-full max-w-md p-6 rounded-2xl bg-[#0c0d12] border border-white/25 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/20">
               <div className="flex items-center gap-2">
-                <span className="w-6 h-px bg-white/20" />
+                <span className="w-6 h-px bg-white/30" />
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
                   {editingItem ? "Edit Menu Dish" : "Add New Dish"}
                 </h3>
@@ -338,7 +338,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   placeholder="e.g. Butter Chicken, Tandoori Roti"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white focus:outline-none focus:border-white/50 transition-colors"
                 />
               </div>
 
@@ -350,7 +350,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   <select
                     value={formCategory}
                     onChange={(e) => setFormCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#0c0d12] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl bg-[#0c0d12] border border-white/20 text-xs text-white focus:outline-none focus:border-white/50 transition-colors"
                   >
                     {DEFAULT_CATEGORIES.map((c) => (
                       <option key={c} value={c}>
@@ -372,7 +372,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                     value={formPriceRupees || ""}
                     onChange={(e) => setFormPriceRupees(parseFloat(e.target.value) || 0)}
                     placeholder="250"
-                    className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs font-mono text-white focus:outline-none focus:border-white/30 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/20 text-xs font-mono text-white focus:outline-none focus:border-white/50 transition-colors"
                   />
                 </div>
               </div>
@@ -386,7 +386,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   placeholder="Or enter new category"
                   value={formCustomCategory}
                   onChange={(e) => setFormCustomCategory(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white focus:outline-none focus:border-white/50 transition-colors"
                 />
               </div>
 
@@ -399,7 +399,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   placeholder="Brief culinary notes and recipe details"
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/20 text-xs text-white focus:outline-none focus:border-white/50 transition-colors"
                 />
               </div>
 
@@ -409,18 +409,18 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   id="availCheck"
                   checked={formAvailable}
                   onChange={(e) => setFormAvailable(e.target.checked)}
-                  className="rounded border-white/20 bg-black text-white focus:ring-0"
+                  className="rounded border-white/25 bg-black text-white focus:ring-0"
                 />
                 <label htmlFor="availCheck" className="text-xs text-white/60 select-none cursor-pointer font-mono">
                   Available in POS & Kitchen Terminal
                 </label>
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-white/10">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-white/20">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-white/60 text-xs font-mono transition-colors"
+                  className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/20 hover:border-white/40 text-white/70 text-xs font-mono transition-colors"
                 >
                   Cancel
                 </button>
