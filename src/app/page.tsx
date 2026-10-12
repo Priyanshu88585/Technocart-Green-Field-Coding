@@ -1,16 +1,10 @@
 import Link from "next/link";
-import { getMenuItems, getSettings } from "@/app/actions";
-import { formatCurrency } from "@/lib/money";
+import { getSettings } from "@/app/actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
-  const [items, settings] = await Promise.all([
-    getMenuItems(),
-    getSettings(),
-  ]);
-
-  const categories = Array.from(new Set(items.map((i) => i.category)));
+  const settings = await getSettings();
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-white selection:text-black">
@@ -100,12 +94,6 @@ export default async function LandingPage() {
               </svg>
             </Link>
 
-            <a
-              href="#menu"
-              className="px-8 py-4 border border-white/20 bg-white/5 text-white text-sm font-semibold hover:bg-white/10 hover:border-white/40 transition-all backdrop-blur-sm flex items-center justify-center gap-2 rounded-xl whitespace-nowrap"
-            >
-              <span>Explore Live Menu ({items.length})</span>
-            </a>
 
             <a
               href="#credentials"
@@ -241,87 +229,6 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* Culinary Menu Showcase (Direct from MongoDB) */}
-      <section id="menu" className="py-24 lg:py-32 border-b border-white/20">
-        <div className="max-w-[1500px] mx-auto px-6 lg:px-12">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
-            <div>
-              <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 mb-3 tracking-widest uppercase">
-                <span className="w-12 h-px bg-white/30" />
-                Artisanal Kitchen Ledger
-              </span>
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
-                Signature Menu.
-              </h2>
-              <p className="text-sm sm:text-base text-white/40 mt-1 max-w-xl">
-                Real-time dishes persisted in MongoDB. Backed by precise integer paise pricing.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 overflow-x-auto pb-2">
-              <span className="px-3 py-1.5 rounded-full text-xs font-mono bg-white text-black font-semibold shadow-sm">
-                All ({items.length})
-              </span>
-              {categories.map((cat) => (
-                <span
-                  key={cat}
-                  className="px-3 py-1.5 rounded-full text-xs font-mono border border-white/20 bg-white/5 text-white/60 hover:text-white hover:border-white/40 transition-colors"
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {items.map((item, idx) => {
-              const num = (idx + 1).toString().padStart(2, "0");
-              return (
-                <div
-                  key={item.id}
-                  className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm hover:border-white/40 transition-all flex flex-col justify-between space-y-6 group shadow-sm"
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm text-white/30 group-hover:text-white/60 transition-colors">
-                        {num}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${
-                            item.available ? "bg-emerald-400" : "bg-amber-400"
-                          }`}
-                        />
-                        <span className="text-[10px] font-mono uppercase tracking-wider text-white/40">
-                          {item.available ? "IN STOCK" : "SOLD OUT"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl font-bold text-white group-hover:translate-x-1 transition-transform">
-                        {item.name}
-                      </h3>
-                      <p className="text-xs text-white/40 leading-relaxed mt-1 line-clamp-2">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4 border-t border-white/20">
-                    <span className="text-xs font-mono uppercase tracking-wider text-white/40">
-                      {item.category}
-                    </span>
-                    <span className="text-lg font-mono font-bold text-white">
-                      {formatCurrency(item.priceInPaise)}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
       {/* Culinary Heritage & Craft Section (Portfolio Two-Column Style) */}
       <section id="about" className="py-24 lg:py-32 border-b border-white/20">
