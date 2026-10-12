@@ -112,34 +112,6 @@ export default async function LandingPage() {
               Demo Credentials &darr;
             </a>
           </div>
-
-          {/* Hero Numbers Strip (Portfolio Style) */}
-          <div className="flex flex-wrap items-start mt-16 lg:mt-24 gap-10 sm:gap-14 lg:gap-20 border-t border-white/20 pt-10">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-3xl sm:text-4xl lg:text-5xl font-mono font-bold text-white">100%</span>
-              <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest font-mono">
-                MongoDB Atlas Synced
-              </span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <span className="text-3xl sm:text-4xl lg:text-5xl font-mono font-bold text-white">12+</span>
-              <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest font-mono">
-                Dining Floor Tables
-              </span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <span className="text-3xl sm:text-4xl lg:text-5xl font-mono font-bold text-white">&lt; 100ms</span>
-              <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest font-mono">
-                Bill Calculation Latency
-              </span>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <span className="text-3xl sm:text-4xl lg:text-5xl font-mono font-bold text-white">₹ 0</span>
-              <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-widest font-mono">
-                Paise Rounding Variance
-              </span>
-            </div>
-          </div>
         </div>
       </section>
 

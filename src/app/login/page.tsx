@@ -102,10 +102,6 @@ function LoginForm() {
               />
             </div>
             <div className="space-y-1">
-              <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 uppercase tracking-widest">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
-                MongoDB Session
-              </span>
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
                 Restaurant Staff Login
               </h1>
