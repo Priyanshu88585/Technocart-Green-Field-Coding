@@ -21,12 +21,7 @@ import {
 import { checkRateLimit, resetRateLimit } from "@/lib/rateLimit";
 import { revalidatePath } from "next/cache";
 
-// Safe generic error message for user-facing responses
 const GENERIC_ERROR_MSG = "Unable to process your request at this time. Please try again.";
-
-// ----------------------------------------------------
-// MENU MANAGEMENT (Protected: ADMIN & MANAGER)
-// ----------------------------------------------------
 
 export async function getMenuItems() {
   try {
@@ -51,7 +46,6 @@ export async function getMenuItemsByCategory() {
 
 export async function createMenuItem(data: unknown) {
   try {
-    // RBAC: Only ADMIN and MANAGER can create menu items
     await requireRole(["ADMIN", "MANAGER"]);
 
     const parsed = menuItemSchema.safeParse(data);
@@ -81,7 +75,6 @@ export async function createMenuItem(data: unknown) {
 
 export async function updateMenuItem(id: string, data: unknown) {
   try {
-    // RBAC: Only ADMIN and MANAGER can update menu items
     await requireRole(["ADMIN", "MANAGER"]);
 
     const idParsed = objectIdSchema.safeParse(id);
@@ -113,7 +106,6 @@ export async function updateMenuItem(id: string, data: unknown) {
 
 export async function deleteMenuItem(id: string) {
   try {
-    // RBAC: Only ADMIN and MANAGER can delete menu items
     await requireRole(["ADMIN", "MANAGER"]);
 
     const idParsed = objectIdSchema.safeParse(id);
@@ -140,10 +132,6 @@ export async function deleteMenuItem(id: string) {
   }
 }
 
-// ----------------------------------------------------
-// ORDERS & BILLING (Protected: Authenticated Staff)
-// ----------------------------------------------------
-
 export async function getNextOrderNumber(): Promise<number> {
   const lastOrder = await prisma.order.findFirst({
     orderBy: { orderNumber: "desc" },
@@ -154,7 +142,6 @@ export async function getNextOrderNumber(): Promise<number> {
 
 export async function createOrder(data: unknown) {
   try {
-    // Require authenticated staff
     await requireAuth();
 
     const parsed = createOrderSchema.safeParse(data);
@@ -164,7 +151,6 @@ export async function createOrder(data: unknown) {
 
     const { items, discountPercent, taxPercent, servicePercent, ...orderData } = parsed.data;
 
-    // Verify item prices directly from database to prevent client tampering
     const menuItemIds = items.map((i) => i.menuItemId).filter(Boolean);
     const menuItems = await prisma.menuItem.findMany({
       where: { id: { in: menuItemIds } },
@@ -174,7 +160,6 @@ export async function createOrder(data: unknown) {
 
     const validatedItems = items.map((item) => {
       const menuItem = menuItemMap.get(item.menuItemId);
-      // Enforce DB price when available, otherwise require verified unit price >= 0
       const unitPrice = menuItem ? menuItem.priceInPaise : Math.max(0, item.unitPriceInPaise);
       const name = menuItem ? menuItem.name : item.itemName;
       return {
@@ -331,7 +316,6 @@ export async function addItemToOrder(
     if (!order) return { error: "Order not found" };
     if (order.status !== "active") return { error: "Cannot add items to an inactive order" };
 
-    // If menuItemId provided, verify true price from DB
     let unitPrice = Math.max(0, item.unitPriceInPaise);
     if (item.menuItemId) {
       const dbMenuItem = await prisma.menuItem.findUnique({
@@ -439,10 +423,6 @@ export async function recordPayment(data: unknown) {
   }
 }
 
-// ----------------------------------------------------
-// RESTAURANT SETTINGS (Protected: ADMIN Only)
-// ----------------------------------------------------
-
 export async function getSettings() {
   try {
     let settings = await prisma.restaurantSettings.findFirst();
@@ -473,7 +453,6 @@ export async function getSettings() {
 
 export async function updateSettings(data: unknown) {
   try {
-    // RBAC: Only ADMIN can modify restaurant settings and tax parameters
     await requireRole(["ADMIN"]);
 
     const parsed = settingsSchema.safeParse(data);
@@ -505,10 +484,6 @@ export async function updateSettings(data: unknown) {
     return { error: GENERIC_ERROR_MSG };
   }
 }
-
-// ----------------------------------------------------
-// DASHBOARD & ANALYTICS (Protected: Staff)
-// ----------------------------------------------------
 
 export async function getDashboardStats() {
   try {
@@ -568,10 +543,6 @@ export async function getDashboardStats() {
   }
 }
 
-// ----------------------------------------------------
-// AUTHENTICATION & SESSIONS
-// ----------------------------------------------------
-
 export async function loginUser(data: unknown) {
   try {
     const parsed = loginSchema.safeParse(data);
@@ -581,7 +552,6 @@ export async function loginUser(data: unknown) {
 
     const { email, password } = parsed.data;
 
-    // Brute-force & credential stuffing defense: rate limit by normalized email
     const rateCheck = checkRateLimit(`login:${email}`, 5, 15 * 60 * 1000);
     if (!rateCheck.success) {
       return {
@@ -595,8 +565,6 @@ export async function loginUser(data: unknown) {
       where: { email: email.toLowerCase().trim() },
     });
 
-    // Timing-attack mitigation & user enumeration prevention:
-    // Generic error message for both user-not-found and invalid password
     if (!user) {
       return { error: "Invalid email or password credentials" };
     }
@@ -606,7 +574,6 @@ export async function loginUser(data: unknown) {
       return { error: "Invalid email or password credentials" };
     }
 
-    // Login successful: reset rate limiter for this account
     resetRateLimit(`login:${email}`);
 
     await setAuthCookie({
@@ -626,7 +593,6 @@ export async function loginUser(data: unknown) {
     };
   } catch (err: unknown) {
     console.error("loginUser internal error:", err);
-    // Never expose stack trace or database exceptions to the client
     return { error: "Authentication service temporarily unavailable. Please try again." };
   }
 }

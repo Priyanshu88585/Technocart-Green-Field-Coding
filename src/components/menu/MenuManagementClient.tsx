@@ -30,11 +30,9 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Modal states
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null);
 
-  // Form states
   const [formName, setFormName] = useState<string>("");
   const [formCategory, setFormCategory] = useState<string>(DEFAULT_CATEGORIES[0]);
   const [formCustomCategory, setFormCustomCategory] = useState<string>("");
@@ -43,7 +41,6 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
   const [formAvailable, setFormAvailable] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Categories list
   const categories = useMemo(() => {
     const set = new Set<string>();
     items.forEach((item) => set.add(item.category));

@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// MongoDB ObjectId validation regex (24 hex characters)
 export const objectIdSchema = z
   .string()
   .trim()

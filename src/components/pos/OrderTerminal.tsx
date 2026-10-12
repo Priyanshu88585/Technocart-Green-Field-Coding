@@ -53,14 +53,12 @@ export function OrderTerminal({
   const [discountPercent, setDiscountPercent] = useState<number>(0);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Extract unique categories
   const categories = useMemo(() => {
     const set = new Set<string>();
     items.forEach((item) => set.add(item.category));
     return ["All", ...Array.from(set)];
   }, [items]);
 
-  // Filter items by category & search
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
       const matchesCat =
@@ -72,7 +70,6 @@ export function OrderTerminal({
     });
   }, [items, selectedCategory, searchQuery]);
 
-  // Cart manipulation
   const addToCart = (item: MenuItem) => {
     if (!item.available) {
       addToast(`${item.name} is currently out of stock`, "warning");
@@ -123,7 +120,6 @@ export function OrderTerminal({
     setDiscountPercent(0);
   };
 
-  // Bill calculation in integer paise
   const bill = useMemo(() => {
     return calculateBill(
       cart.map((i) => ({ unitPriceInPaise: i.unitPriceInPaise, quantity: i.quantity })),
@@ -144,7 +140,6 @@ export function OrderTerminal({
     try {
       const finalTable = orderType === "dine-in" ? (customTable || tableNumber) : "";
       
-      // Combine customer CRM details into note if provided
       let orderNotes = note.trim();
       if (customerName || customerPhone) {
         const crmInfo = `Guest: ${customerName || "Walk-in"}${customerPhone ? ` (${customerPhone})` : ""}`;

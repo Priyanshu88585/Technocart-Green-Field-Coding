@@ -4,7 +4,6 @@ import { prisma } from "./prisma";
 
 export const SESSION_COOKIE_NAME = "grand_kitchen_session";
 
-// Secret used for HMAC-SHA256 session signatures
 const SESSION_SECRET =
   process.env.SESSION_SECRET ||
   "the-grand-kitchen-secret-key-2025-secure-hash-jwt-fallback-production-secure";
@@ -57,10 +56,9 @@ async function getCryptoKey(secret: string): Promise<CryptoKey> {
   );
 }
 
-// Universal HMAC-SHA256 Token Creation
 export async function createSessionToken(payload: Omit<SessionPayload, "exp" | "iat">): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
-  const expiresAt = now + 60 * 60 * 24 * 7; // 7 days expiration
+  const expiresAt = now + 60 * 60 * 24 * 7;
   const data: SessionPayload = { ...payload, exp: expiresAt, iat: now };
   const jsonStr = JSON.stringify(data);
   const enc = new TextEncoder();
@@ -73,7 +71,6 @@ export async function createSessionToken(payload: Omit<SessionPayload, "exp" | "
   return `${encodedPayload}.${signature}`;
 }
 
-// Universal HMAC-SHA256 Token Verification (Works in Edge & Node.js with constant-time verification)
 export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
   try {
     if (!token || typeof token !== "string") return null;
@@ -85,7 +82,6 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
     const enc = new TextEncoder();
     const key = await getCryptoKey(SESSION_SECRET);
 
-    // Decode signature
     const sigStr = base64UrlDecode(signature);
     const sigBytes = new Uint8Array(sigStr.length);
     for (let i = 0; i < sigStr.length; i++) {
@@ -108,7 +104,6 @@ export async function verifySessionToken(token: string): Promise<SessionPayload 
   }
 }
 
-// Set hardened HTTP-Only auth cookie in Next.js Server Action / Route
 export async function setAuthCookie(payload: Omit<SessionPayload, "exp" | "iat">) {
   const token = await createSessionToken(payload);
   const cookieStore = await cookies();
@@ -121,7 +116,6 @@ export async function setAuthCookie(payload: Omit<SessionPayload, "exp" | "iat">
   });
 }
 
-// Clear auth cookie safely
 export async function clearAuthCookie() {
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, "", {
@@ -133,7 +127,6 @@ export async function clearAuthCookie() {
   });
 }
 
-// Get session from server action / RSC
 export async function getSession(): Promise<SessionPayload | null> {
   try {
     const cookieStore = await cookies();
@@ -145,7 +138,6 @@ export async function getSession(): Promise<SessionPayload | null> {
   }
 }
 
-// Guard: Require authenticated user or throw/return error
 export async function requireAuth(): Promise<SessionPayload> {
   const session = await getSession();
   if (!session) {
@@ -154,7 +146,6 @@ export async function requireAuth(): Promise<SessionPayload> {
   return session;
 }
 
-// Guard: Require specific user role(s) or throw/return error
 export async function requireRole(allowedRoles: UserRole[]): Promise<SessionPayload> {
   const session = await requireAuth();
   if (!allowedRoles.includes(session.role)) {
@@ -163,7 +154,6 @@ export async function requireRole(allowedRoles: UserRole[]): Promise<SessionPayl
   return session;
 }
 
-// Get full current user record from MongoDB safely without leaking password
 export async function getCurrentUser() {
   const session = await getSession();
   if (!session) return null;

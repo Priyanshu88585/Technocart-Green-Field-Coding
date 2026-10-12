@@ -61,7 +61,6 @@ export function OrderDetailClient({
   const { addToast } = useToast();
   const [order, setOrder] = useState<Order>(initialOrder);
 
-  // Payment form state
   const totalPaid = order.payments.reduce((sum, p) => sum + p.amountInPaise, 0);
   const balanceRemaining = Math.max(0, order.totalInPaise - totalPaid);
 
@@ -70,7 +69,6 @@ export function OrderDetailClient({
   const [paymentRef, setPaymentRef] = useState<string>("");
   const [isPaying, setIsPaying] = useState<boolean>(false);
 
-  // Add Item to existing order state
   const [showAddItem, setShowAddItem] = useState<boolean>(false);
   const [selectedMenuItemId, setSelectedMenuItemId] = useState<string>(menuItems[0]?.id || "");
   const [addQuantity, setAddQuantity] = useState<number>(1);

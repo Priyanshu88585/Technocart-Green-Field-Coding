@@ -64,7 +64,6 @@ export function InvoiceClient({
     window.print();
   };
 
-  // Indian GST split into CGST (half) and SGST (half) if taxPercent is present
   const halfTaxPaise = Math.round(order.taxInPaise / 2);
   const halfTaxPercent = (order.taxPercent / 2).toFixed(1);
 

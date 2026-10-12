@@ -61,7 +61,6 @@ async function verifyEdgeToken(token: string): Promise<TokenPayload | null> {
   }
 }
 
-// Protected route groups
 const protectedRoutes = ["/dashboard", "/orders", "/menu", "/settings", "/billing"];
 const adminOnlyRoutes = ["/settings"];
 
@@ -77,29 +76,24 @@ export async function middleware(request: NextRequest) {
     session = await verifyEdgeToken(token);
   }
 
-  // 1. Unauthenticated access to protected routes
   if (isProtected && !session) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // 2. Role-Based Route Protection (RBAC)
   if (session && adminOnlyRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))) {
     if (session.role !== "ADMIN") {
-      // Non-admins cannot access /settings
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
-  // 3. Already authenticated user trying to visit login page
   if (isLoginPage && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   const response = NextResponse.next();
 
-  // Inject security headers on every response
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");

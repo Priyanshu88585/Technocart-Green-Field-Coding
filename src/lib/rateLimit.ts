@@ -1,5 +1,3 @@
-// Rate limiter utility to prevent brute force and DoS attacks
-
 interface RateLimitRecord {
   count: number;
   resetTime: number;
@@ -7,7 +5,6 @@ interface RateLimitRecord {
 
 const rateLimitMap = new Map<string, RateLimitRecord>();
 
-// Cleanup stale entries every 5 minutes to avoid memory leaks
 if (typeof setInterval !== "undefined") {
   setInterval(() => {
     const now = Date.now();

@@ -6,6 +6,7 @@ Developed for the **Technical Assessment: Restaurant Billing & Management System
 
 - **🌐 Live Production URL**: [https://technocart-green-field-coding.vercel.app/](https://technocart-green-field-coding.vercel.app/)
 - **📦 GitHub Repository**: [https://github.com/Priyanshu88585/Technocart-Green-Field-Coding](https://github.com/Priyanshu88585/Technocart-Green-Field-Coding)
+- **📖 Step-by-Step Operating Guide**: [HOW_TO_USE.md](HOW_TO_USE.md)
 
 ---
 
