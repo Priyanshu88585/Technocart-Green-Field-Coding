@@ -46,9 +46,10 @@ function LoginForm() {
       addToast(`Welcome back, ${res.data?.name || "Staff Member"}!`, "success");
       router.push(from);
       router.refresh();
-    } catch {
-      setError("An unexpected error occurred during login. Please try again.");
-      addToast("Login failed. Check server connection.", "error");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "An unexpected error occurred during login. Please try again.";
+      setError(msg);
+      addToast(msg, "error");
       setLoading(false);
     }
   };

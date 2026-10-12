@@ -348,40 +348,46 @@ export async function getDashboardStats() {
 }
 
 export async function loginUser(data: unknown) {
-  const parsed = loginSchema.safeParse(data);
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid email or password" };
-  }
+  try {
+    const parsed = loginSchema.safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || "Invalid email or password" };
+    }
 
-  const { email, password } = parsed.data;
-  const user = await prisma.user.findUnique({
-    where: { email: email.toLowerCase().trim() },
-  });
+    const { email, password } = parsed.data;
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase().trim() },
+    });
 
-  if (!user) {
-    return { error: "No account found with this email address" };
-  }
+    if (!user) {
+      return { error: "No account found with this email address" };
+    }
 
-  const isPasswordValid = await verifyPassword(password, user.password);
-  if (!isPasswordValid) {
-    return { error: "Incorrect password. Please verify credentials." };
-  }
+    const isPasswordValid = await verifyPassword(password, user.password);
+    if (!isPasswordValid) {
+      return { error: "Incorrect password. Please verify credentials." };
+    }
 
-  await setAuthCookie({
-    userId: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role as "ADMIN" | "MANAGER" | "CASHIER",
-  });
-
-  return {
-    data: {
-      id: user.id,
-      name: user.name,
+    await setAuthCookie({
+      userId: user.id,
       email: user.email,
-      role: user.role,
-    },
-  };
+      name: user.name,
+      role: user.role as "ADMIN" | "MANAGER" | "CASHIER",
+    });
+
+    return {
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    };
+  } catch (err: unknown) {
+    console.error("loginUser error:", err);
+    const message = err instanceof Error ? err.message : "Authentication error occurred";
+    return { error: message };
+  }
 }
 
 export async function logoutUser() {
