@@ -41,7 +41,6 @@ export default async function LandingPage() {
 
           <nav className="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-widest text-white/50">
             <a href="#about" className="hover:text-white transition-colors">Heritage</a>
-            <a href="#menu" className="hover:text-white transition-colors">Menu</a>
             <a href="#crm" className="hover:text-white transition-colors">POS Suite</a>
             <a href="#credentials" className="text-white hover:text-white/80 transition-colors font-bold underline underline-offset-4">Staff Access</a>
             <a href="#reserve" className="hover:text-white transition-colors">Reserve</a>
