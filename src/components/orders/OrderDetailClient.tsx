@@ -78,14 +78,13 @@ export function OrderDetailClient({
 
   const handleRecordPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (paymentAmountRupees <= 0) {
-      addToast("Payment amount must be greater than 0", "warning");
+    const amountInPaise = rupeesToPaise(paymentAmountRupees);
+    if (amountInPaise <= 0) {
+      addToast("Payment amount must be greater than zero", "warning");
       return;
     }
-
-    const amountInPaise = rupeesToPaise(paymentAmountRupees);
     if (amountInPaise > balanceRemaining) {
-      addToast("Payment cannot exceed outstanding balance", "warning");
+      addToast("Payment exceeds balance due", "warning");
       return;
     }
 
@@ -102,16 +101,16 @@ export function OrderDetailClient({
         addToast(res.error, "error");
       } else {
         addToast(`Payment of ${formatCurrency(amountInPaise)} recorded!`, "success");
-        // refresh local state
         const newPaid = totalPaid + amountInPaise;
-        const newStatus = newPaid >= order.totalInPaise ? "completed" : order.status;
+        const fullyPaid = newPaid >= order.totalInPaise;
+
         setOrder((prev) => ({
           ...prev,
-          status: newStatus,
+          status: fullyPaid ? "completed" : prev.status,
           payments: [
             ...prev.payments,
             {
-              id: res.data?.id || crypto.randomUUID(),
+              id: res.data?.id || Math.random().toString(),
               amountInPaise,
               method: paymentMethod,
               reference: paymentRef,
@@ -181,21 +180,21 @@ export function OrderDetailClient({
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto text-white">
       {/* Top Details Header Card */}
-      <div className="p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-mono font-bold text-white">
               Order #{order.orderNumber}
             </h1>
             <span
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${
                 order.status === "completed"
-                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                   : order.status === "active"
-                  ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                  : "bg-rose-500/15 text-rose-300 border border-rose-500/30"
+                  ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
+                  : "border-red-500/30 bg-red-500/10 text-red-400"
               }`}
             >
               {order.status === "active" && (
@@ -205,24 +204,24 @@ export function OrderDetailClient({
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-400 mt-2">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-mono text-white/50 mt-2">
             <span>
-              Type: <strong className="text-zinc-200 capitalize">{order.orderType}</strong>
+              Type: <strong className="text-white capitalize">{order.orderType}</strong>
             </span>
             {order.tableNumber && (
               <span>
-                Table: <strong className="text-purple-400">{order.tableNumber}</strong>
+                Table: <strong className="text-white">{order.tableNumber}</strong>
               </span>
             )}
             <span>
               Placed:{" "}
-              <strong className="text-zinc-300 font-mono">
+              <strong className="text-white">
                 {new Date(order.createdAt).toLocaleString("en-IN")}
               </strong>
             </span>
             {order.note && (
-              <span className="text-amber-300/80 bg-amber-500/10 px-2 py-0.5 rounded">
-                Note: {order.note}
+              <span className="text-white/80 border border-white/10 bg-white/5 px-2 py-0.5 rounded">
+                CRM: {order.note}
               </span>
             )}
           </div>
@@ -232,7 +231,7 @@ export function OrderDetailClient({
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href={`/billing/${order.id}`}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 font-semibold text-xs transition-colors"
+            className="px-4 py-2 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all flex items-center gap-2"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="6 9 6 2 18 2 18 9" />
@@ -246,13 +245,13 @@ export function OrderDetailClient({
             <>
               <button
                 onClick={() => handleStatusUpdate("completed")}
-                className="px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 font-semibold text-xs transition-colors"
+                className="px-4 py-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold text-xs transition-colors"
               >
                 ✓ Mark Completed
               </button>
               <button
                 onClick={() => handleStatusUpdate("cancelled")}
-                className="px-4 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/30 text-rose-300 font-semibold text-xs transition-colors"
+                className="px-4 py-2 rounded-xl border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-300 font-semibold text-xs transition-colors"
               >
                 Cancel Order
               </button>
@@ -264,22 +263,22 @@ export function OrderDetailClient({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Ordered Items List & Add Item (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-white tracking-tight">
-                Ordered Items ({order.items.length})
+              <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">
+                Ordered Dishes ({order.items.length})
               </h2>
 
               {order.status === "active" && (
                 <button
                   onClick={() => setShowAddItem(!showAddItem)}
-                  className="text-xs font-semibold text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1"
+                  className="text-xs font-mono text-white/70 hover:text-white transition-colors flex items-center gap-1.5"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
-                  {showAddItem ? "Close Item Picker" : "Add More Items"}
+                  {showAddItem ? "Close Item Picker" : "Append Extra Dish"}
                 </button>
               )}
             </div>
@@ -288,17 +287,17 @@ export function OrderDetailClient({
             {showAddItem && (
               <form
                 onSubmit={handleAddItem}
-                className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/30 space-y-3"
+                className="p-4 rounded-xl border border-white/15 bg-white/[0.02] space-y-3"
               >
-                <div className="text-xs font-semibold text-purple-300 uppercase tracking-wider">
-                  Append Additional Dish to Table
+                <div className="text-xs font-mono uppercase tracking-wider text-white/50">
+                  Select Menu Dish to Append
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="sm:col-span-2">
                     <select
                       value={selectedMenuItemId}
                       onChange={(e) => setSelectedMenuItemId(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-white/[0.1] text-xs text-white focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-background text-xs text-white focus:border-white/40 outline-none font-mono"
                     >
                       {menuItems.map((item) => (
                         <option key={item.id} value={item.id}>
@@ -314,14 +313,14 @@ export function OrderDetailClient({
                       max="99"
                       value={addQuantity}
                       onChange={(e) => setAddQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-16 px-2.5 py-2 rounded-lg bg-zinc-900 border border-white/[0.1] text-xs text-white text-center focus:outline-none"
+                      className="w-16 px-2.5 py-2 rounded-lg border border-white/10 bg-background text-xs text-white text-center focus:border-white/40 outline-none font-mono"
                     />
                     <button
                       type="submit"
                       disabled={isAddingItem}
-                      className="flex-1 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition-colors"
+                      className="flex-1 py-2 rounded-lg bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all"
                     >
-                      {isAddingItem ? "Adding..." : "+ Add Dish"}
+                      {isAddingItem ? "Adding..." : "+ Append"}
                     </button>
                   </div>
                 </div>
@@ -332,24 +331,24 @@ export function OrderDetailClient({
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-white/[0.08] text-zinc-400 uppercase tracking-wider text-[11px]">
-                    <th className="pb-3 font-semibold">Item</th>
+                  <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px] font-mono">
+                    <th className="pb-3 font-semibold">Dish Item</th>
                     <th className="pb-3 font-semibold text-center">Qty</th>
                     <th className="pb-3 font-semibold text-right">Rate</th>
                     <th className="pb-3 font-semibold text-right">Line Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/[0.05]">
+                <tbody className="divide-y divide-white/5 font-mono">
                   {order.items.map((item) => (
                     <tr key={item.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="py-3 font-semibold text-zinc-100">{item.itemName}</td>
-                      <td className="py-3 text-center font-mono font-medium text-zinc-300">
+                      <td className="py-3 font-sans font-semibold text-white">{item.itemName}</td>
+                      <td className="py-3 text-center text-white/70">
                         {item.quantity}
                       </td>
-                      <td className="py-3 text-right font-mono text-zinc-400">
+                      <td className="py-3 text-right text-white/50">
                         {formatCurrency(item.unitPriceInPaise)}
                       </td>
-                      <td className="py-3 text-right font-mono font-bold text-white">
+                      <td className="py-3 text-right font-bold text-white">
                         {formatCurrency(item.lineTotalInPaise)}
                       </td>
                     </tr>
@@ -360,16 +359,16 @@ export function OrderDetailClient({
           </div>
 
           {/* Payment History & Settlement */}
-          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md space-y-4">
+          <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-white tracking-tight">
+              <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">
                 Payment History & Settlement
               </h2>
               <span
-                className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full ${
+                className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full border ${
                   balanceRemaining === 0
-                    ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
-                    : "bg-amber-500/15 text-amber-300 border border-amber-500/30"
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                    : "border-amber-400/30 bg-amber-400/10 text-amber-300"
                 }`}
               >
                 {balanceRemaining === 0 ? "Fully Paid" : `Due: ${formatCurrency(balanceRemaining)}`}
@@ -378,28 +377,28 @@ export function OrderDetailClient({
 
             {order.payments.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
+                <table className="w-full text-left text-xs font-mono">
                   <thead>
-                    <tr className="border-b border-white/[0.08] text-zinc-400 uppercase tracking-wider text-[11px]">
+                    <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px]">
                       <th className="pb-2 font-semibold">Method</th>
                       <th className="pb-2 font-semibold">Amount</th>
                       <th className="pb-2 font-semibold">Reference</th>
                       <th className="pb-2 font-semibold text-right">Timestamp</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.05]">
+                  <tbody className="divide-y divide-white/5">
                     {order.payments.map((p) => (
                       <tr key={p.id}>
-                        <td className="py-2.5 font-semibold capitalize text-purple-400">
+                        <td className="py-2.5 font-semibold capitalize text-white">
                           {p.method}
                         </td>
-                        <td className="py-2.5 font-mono font-bold text-white">
+                        <td className="py-2.5 font-bold text-white">
                           {formatCurrency(p.amountInPaise)}
                         </td>
-                        <td className="py-2.5 text-zinc-400 font-mono">
-                          {p.reference || "Direct Settlement"}
+                        <td className="py-2.5 text-white/40">
+                          {p.reference || "Direct Terminal"}
                         </td>
-                        <td className="py-2.5 text-right text-zinc-500 font-mono">
+                        <td className="py-2.5 text-right text-white/40">
                           {new Date(p.createdAt).toLocaleTimeString("en-IN", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -411,28 +410,28 @@ export function OrderDetailClient({
                 </table>
               </div>
             ) : (
-              <p className="text-xs text-zinc-500 py-2">No payment entries recorded yet.</p>
+              <p className="text-xs font-mono text-white/40 py-2">No payment entries recorded yet.</p>
             )}
 
             {/* Record Payment Form (if balance remaining) */}
             {balanceRemaining > 0 && order.status !== "cancelled" && (
               <form
                 onSubmit={handleRecordPayment}
-                className="pt-4 border-t border-white/[0.08] space-y-3"
+                className="pt-4 border-t border-white/10 space-y-3"
               >
-                <div className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+                <div className="text-xs font-mono uppercase tracking-wider text-white/50">
                   Record Settlement Payment
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
-                    <label className="text-[11px] text-zinc-400 block mb-1">
-                      Payment Mode
+                    <label className="text-[10px] font-mono uppercase text-white/40 block mb-1">
+                      Mode
                     </label>
                     <select
                       value={paymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.1] text-xs text-white focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-background text-xs text-white focus:border-white/40 outline-none font-mono"
                     >
                       <option value="cash">💵 Cash</option>
                       <option value="upi">📱 UPI / QR</option>
@@ -442,7 +441,7 @@ export function OrderDetailClient({
                   </div>
 
                   <div>
-                    <label className="text-[11px] text-zinc-400 block mb-1">
+                    <label className="text-[10px] font-mono uppercase text-white/40 block mb-1">
                       Amount (₹)
                     </label>
                     <input
@@ -452,20 +451,20 @@ export function OrderDetailClient({
                       max={balanceRemaining / 100}
                       value={paymentAmountRupees}
                       onChange={(e) => setPaymentAmountRupees(parseFloat(e.target.value) || 0)}
-                      className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.1] text-xs font-mono text-white focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/[0.02] text-xs font-mono text-white focus:border-white/40 outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] text-zinc-400 block mb-1">
+                    <label className="text-[10px] font-mono uppercase text-white/40 block mb-1">
                       Reference / Note
                     </label>
                     <input
                       type="text"
-                      placeholder="e.g. UPI Ref / Cashier"
+                      placeholder="e.g. UPI Ref / Cashier ID"
                       value={paymentRef}
                       onChange={(e) => setPaymentRef(e.target.value)}
-                      className="w-full px-3 py-2 rounded-lg bg-zinc-950 border border-white/[0.1] text-xs text-white focus:outline-none"
+                      className="w-full px-3 py-2 rounded-lg border border-white/10 bg-white/[0.02] text-xs text-white focus:border-white/40 outline-none font-mono"
                     />
                   </div>
                 </div>
@@ -473,9 +472,9 @@ export function OrderDetailClient({
                 <button
                   type="submit"
                   disabled={isPaying}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/25 transition-all disabled:opacity-50"
+                  className="w-full py-2.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all disabled:opacity-40"
                 >
-                  {isPaying ? "Recording Payment..." : "Record Payment & Complete"}
+                  {isPaying ? "Recording Payment..." : "Record Payment & Settle Ticket"}
                 </button>
               </form>
             )}
@@ -484,15 +483,15 @@ export function OrderDetailClient({
 
         {/* Right Column: Financial Calculation Summary Card (1 col) */}
         <div className="space-y-6">
-          <div className="p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md space-y-4">
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Bill Summary
+          <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md space-y-4">
+            <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">
+              Bill Ledger
             </h2>
 
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between text-zinc-400">
+            <div className="space-y-2 text-xs font-mono">
+              <div className="flex justify-between text-white/50">
                 <span>Items Subtotal</span>
-                <span className="font-mono text-zinc-200">
+                <span className="text-white">
                   {formatCurrency(order.subtotalInPaise)}
                 </span>
               </div>
@@ -500,63 +499,63 @@ export function OrderDetailClient({
               {order.discountInPaise > 0 && (
                 <div className="flex justify-between text-emerald-400">
                   <span>Discount ({order.discountPercent}%)</span>
-                  <span className="font-mono">
+                  <span>
                     -{formatCurrency(order.discountInPaise)}
                   </span>
                 </div>
               )}
 
-              <div className="flex justify-between text-zinc-400">
+              <div className="flex justify-between text-white/50">
                 <span>GST / Tax ({order.taxPercent}%)</span>
-                <span className="font-mono text-zinc-200">
+                <span className="text-white">
                   +{formatCurrency(order.taxInPaise)}
                 </span>
               </div>
 
               {order.serviceInPaise > 0 && (
-                <div className="flex justify-between text-zinc-400">
+                <div className="flex justify-between text-white/50">
                   <span>Service Charge ({order.servicePercent}%)</span>
-                  <span className="font-mono text-zinc-200">
+                  <span className="text-white">
                     +{formatCurrency(order.serviceInPaise)}
                   </span>
                 </div>
               )}
 
-              <div className="pt-3 border-t border-white/[0.08] flex items-baseline justify-between">
-                <span className="text-sm font-bold text-white uppercase tracking-wider">
+              <div className="pt-3 border-t border-white/10 flex items-baseline justify-between">
+                <span className="text-xs uppercase tracking-widest text-white/40">
                   Grand Total
                 </span>
-                <span className="text-xl font-extrabold text-purple-400 font-mono">
+                <span className="text-xl font-bold text-white font-mono">
                   {formatCurrency(order.totalInPaise)}
                 </span>
               </div>
 
-              <div className="pt-2 border-t border-white/[0.05] flex justify-between text-xs text-zinc-400">
+              <div className="pt-2 border-t border-white/5 flex justify-between text-xs text-white/50">
                 <span>Total Paid</span>
-                <span className="font-mono text-emerald-400 font-semibold">
+                <span className="text-emerald-400 font-semibold">
                   {formatCurrency(totalPaid)}
                 </span>
               </div>
 
-              <div className="flex justify-between text-xs text-zinc-400">
+              <div className="flex justify-between text-xs text-white/50">
                 <span>Balance Due</span>
-                <span className="font-mono text-amber-400 font-bold">
+                <span className="text-amber-400 font-bold">
                   {formatCurrency(balanceRemaining)}
                 </span>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/[0.08]">
+            <div className="pt-4 border-t border-white/10">
               <Link
                 href={`/billing/${order.id}`}
-                className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all flex items-center justify-center gap-2"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="6 9 6 2 18 2 18 9" />
                   <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                   <rect x="6" y="14" width="12" height="8" />
                 </svg>
-                View Customer Receipt
+                View Thermal Invoice
               </Link>
             </div>
           </div>

@@ -57,6 +57,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
         !q ||
         order.orderNumber.toString().includes(q) ||
         order.tableNumber.toLowerCase().includes(q) ||
+        (order.note && order.note.toLowerCase().includes(q)) ||
         order.items.some((i) => i.itemName.toLowerCase().includes(q));
 
       return matchStatus && matchType && matchSearch;
@@ -79,16 +80,16 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
         );
       }
     } catch {
-      addToast("Failed to update status", "error");
+      addToast("Failed to update order status", "error");
     } finally {
       setIsUpdating(null);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white max-w-[1500px] mx-auto">
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md">
         {/* Status Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
@@ -104,8 +105,8 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                 onClick={() => setSelectedStatus(tab.id)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                   active
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
-                    : "bg-white/[0.03] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]"
+                    ? "bg-white text-black shadow-sm"
+                    : "border border-white/10 bg-white/5 text-white/50 hover:text-white"
                 }`}
               >
                 {tab.label}
@@ -119,7 +120,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            className="px-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs text-zinc-200 focus:outline-none"
+            className="px-3 py-1.5 rounded-xl border border-white/10 bg-background text-xs text-white/80 focus:border-white/40 outline-none font-mono"
           >
             <option value="all">All Types</option>
             <option value="dine-in">Dine-In</option>
@@ -128,7 +129,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
 
           <div className="relative flex-1 sm:w-64">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40"
               width="14"
               height="14"
               viewBox="0 0 24 24"
@@ -141,10 +142,10 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
             </svg>
             <input
               type="text"
-              placeholder="Filter by #, table, dish..."
+              placeholder="Search by #, table, guest..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500/50"
+              className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-white/10 bg-white/[0.02] text-xs text-white placeholder-white/30 focus:border-white/40 outline-none font-mono"
             />
           </div>
         </div>
@@ -152,36 +153,32 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
 
       {/* Orders Table / Cards */}
       {filteredOrders.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-zinc-900/40 border border-white/[0.06] text-center space-y-3">
-          <div className="w-12 h-12 rounded-2xl bg-white/[0.04] flex items-center justify-center mx-auto text-zinc-500">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <line x1="9" y1="9" x2="15" y2="15" />
-              <line x1="15" y1="9" x2="9" y2="15" />
-            </svg>
+        <div className="p-12 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm text-center space-y-3">
+          <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/5 flex items-center justify-center mx-auto text-white/40 font-mono">
+            ∅
           </div>
-          <p className="text-sm font-medium text-zinc-300">No orders matching your criteria</p>
-          <p className="text-xs text-zinc-500">
+          <p className="text-sm font-semibold text-white">No orders matching your criteria</p>
+          <p className="text-xs font-mono text-white/40">
             Try switching filters or clear the search query.
           </p>
         </div>
       ) : (
-        <div className="rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md overflow-hidden">
+        <div className="rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-white/[0.08] text-zinc-400 uppercase tracking-wider text-[11px] bg-white/[0.02]">
+                <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px] font-mono bg-white/[0.02]">
                   <th className="py-3.5 px-4 font-semibold">Order</th>
                   <th className="py-3.5 px-4 font-semibold">Type</th>
-                  <th className="py-3.5 px-4 font-semibold">Table</th>
-                  <th className="py-3.5 px-4 font-semibold">Items</th>
+                  <th className="py-3.5 px-4 font-semibold">Table / Guest</th>
+                  <th className="py-3.5 px-4 font-semibold">Dishes Ordered</th>
                   <th className="py-3.5 px-4 font-semibold">Total Bill</th>
                   <th className="py-3.5 px-4 font-semibold">Time</th>
                   <th className="py-3.5 px-4 font-semibold">Status</th>
                   <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.05]">
+              <tbody className="divide-y divide-white/5 font-mono">
                 {filteredOrders.map((order) => {
                   const dateStr = new Date(order.createdAt).toLocaleTimeString("en-IN", {
                     hour: "2-digit",
@@ -193,51 +190,50 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                       key={order.id}
                       className="hover:bg-white/[0.02] transition-colors group"
                     >
-                      <td className="py-4 px-4 font-mono font-bold text-white">
+                      <td className="py-4 px-4 font-bold text-white">
                         #{order.orderNumber}
                       </td>
 
                       <td className="py-4 px-4">
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider ${
-                            order.orderType === "dine-in"
-                              ? "bg-purple-500/15 text-purple-300 border border-purple-500/30"
-                              : "bg-blue-500/15 text-blue-300 border border-blue-500/30"
-                          }`}
-                        >
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider border border-white/10 bg-white/5 text-white/70">
                           {order.orderType}
                         </span>
                       </td>
 
-                      <td className="py-4 px-4 font-medium text-zinc-200">
-                        {order.tableNumber ? `Table ${order.tableNumber}` : "—"}
+                      <td className="py-4 px-4 text-white">
+                        <div>{order.tableNumber ? `Table ${order.tableNumber}` : "Takeaway"}</div>
+                        {order.note && (
+                          <div className="text-[10px] text-white/40 truncate max-w-[140px] mt-0.5">
+                            {order.note}
+                          </div>
+                        )}
                       </td>
 
-                      <td className="py-4 px-4 max-w-xs">
-                        <div className="text-zinc-300 truncate font-medium">
+                      <td className="py-4 px-4 max-w-xs font-sans">
+                        <div className="text-white/80 truncate font-medium">
                           {order.items.map((i) => `${i.itemName} (x${i.quantity})`).join(", ")}
                         </div>
-                        <div className="text-[11px] text-zinc-500 mt-0.5">
+                        <div className="text-[10px] text-white/40 font-mono mt-0.5">
                           {order.items.reduce((s, i) => s + i.quantity, 0)} total pcs
                         </div>
                       </td>
 
-                      <td className="py-4 px-4 font-mono font-bold text-zinc-100">
+                      <td className="py-4 px-4 font-bold text-white">
                         {formatCurrency(order.totalInPaise)}
                       </td>
 
-                      <td className="py-4 px-4 text-zinc-400 font-mono">
+                      <td className="py-4 px-4 text-white/40">
                         {dateStr}
                       </td>
 
                       <td className="py-4 px-4">
                         <span
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider border ${
                             order.status === "completed"
-                              ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                               : order.status === "active"
-                              ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                              : "bg-rose-500/15 text-rose-300 border border-rose-500/30"
+                              ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
+                              : "border-red-500/30 bg-red-500/10 text-red-400"
                           }`}
                         >
                           {order.status === "active" && (
@@ -251,14 +247,14 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                         <div className="flex items-center justify-end gap-2">
                           <Link
                             href={`/orders/${order.id}`}
-                            className="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200 font-semibold text-xs transition-colors"
+                            className="px-2.5 py-1 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium text-xs transition-colors"
                           >
-                            Details
+                            KOT
                           </Link>
 
                           <Link
                             href={`/billing/${order.id}`}
-                            className="px-2.5 py-1 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 font-semibold text-xs transition-colors"
+                            className="px-2.5 py-1 rounded-lg bg-white text-black font-semibold text-xs hover:bg-white/90 transition-all"
                           >
                             Bill
                           </Link>
@@ -267,7 +263,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
                             <button
                               onClick={() => handleStatusChange(order.id, "completed")}
                               disabled={isUpdating === order.id}
-                              className="px-2.5 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 font-semibold text-xs transition-colors"
+                              className="px-2.5 py-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 font-semibold text-xs transition-colors"
                             >
                               Settle
                             </button>

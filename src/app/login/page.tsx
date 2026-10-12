@@ -55,57 +55,53 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col justify-between relative overflow-hidden select-none">
-      {/* Background glow effects */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
-
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-white selection:text-black">
       {/* Top Navbar */}
-      <header className="p-6 max-w-7xl w-full mx-auto flex items-center justify-between relative z-10">
+      <header className="p-6 max-w-[1500px] w-full mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 group-hover:scale-105 transition-transform">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="w-8 h-8 rounded-lg border border-white/15 bg-white/5 flex items-center justify-center text-white group-hover:border-white/40 transition-colors">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 2L2 7l10 5 10-5-10-5z" />
               <path d="M2 17l10 5 10-5" />
               <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
           <div>
-            <span className="font-bold text-base tracking-tight text-white block">The Grand Kitchen</span>
-            <span className="text-[10px] uppercase tracking-widest text-zinc-400">Staff Portal</span>
+            <span className="font-semibold text-sm tracking-tight text-white block">The Grand Kitchen</span>
+            <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest block">Staff POS Terminal</span>
           </div>
         </Link>
 
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono text-white/60 hover:text-white border border-white/10 bg-white/5 hover:bg-white/10 transition-all"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="15 18 9 12 15 6" />
           </svg>
-          Back to Restaurant Site
+          Back to Restaurant
         </Link>
       </header>
 
       {/* Center Auth Card */}
-      <main className="flex-1 flex items-center justify-center p-4 relative z-10">
-        <div className="w-full max-w-md bg-zinc-900/80 border border-white/10 backdrop-blur-2xl p-8 rounded-3xl shadow-2xl shadow-purple-950/40 space-y-6">
-          <div className="text-center space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold tracking-wide">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+      <main className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-md rounded-2xl border border-white/15 bg-background/70 backdrop-blur-xl p-8 sm:p-10 space-y-6">
+          <div className="space-y-2">
+            <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 uppercase tracking-widest">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
               MongoDB Authenticated Session
-            </div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-white">
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
               Restaurant Staff Login
             </h1>
-            <p className="text-xs text-zinc-400">
-              Sign in with your verified credentials to access POS billing and operations
+            <p className="text-xs text-white/40 leading-relaxed">
+              Sign in with your verified credentials to access POS billing, kitchen orders, and store operations.
             </p>
           </div>
 
           {/* Error Banner */}
           {error && (
-            <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2.5 animate-fadeIn">
+            <div className="p-3.5 rounded-xl border border-red-500/30 bg-red-500/10 text-red-300 text-xs font-mono flex items-center gap-2.5">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="12" y1="8" x2="12" y2="12" />
@@ -116,34 +112,34 @@ function LoginForm() {
           )}
 
           {/* Quick-Fill Demo Credentials Selector */}
-          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2.5">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+          <div className="p-4 rounded-xl border border-white/10 bg-white/[0.02] space-y-2.5">
+            <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-white/40">
               <span>Quick Demo Accounts</span>
-              <span className="text-[10px] text-purple-400">Click to Autofill</span>
+              <span className="text-white/60">Click to Autofill</span>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => handleFillCredentials("admin@thegrandkitchen.com", "GrandAdmin123!")}
-                className="p-2.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/25 text-left transition-all group"
+                className="p-3 rounded-xl border border-white/10 bg-white/5 hover:border-white/30 text-left transition-all"
               >
-                <div className="text-[11px] font-bold text-purple-300 flex items-center justify-between">
+                <div className="text-xs font-semibold text-white flex items-center justify-between">
                   <span>Store Manager</span>
-                  <span className="text-[10px] font-mono opacity-60">Admin</span>
+                  <span className="text-[10px] font-mono text-white/40">ADMIN</span>
                 </div>
-                <div className="text-[10px] text-zinc-400 truncate mt-0.5">admin@thegrandkitchen.com</div>
+                <div className="text-[10px] font-mono text-white/40 truncate mt-1">admin@thegrandkitchen.com</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleFillCredentials("cashier@thegrandkitchen.com", "Cashier123!")}
-                className="p-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 text-left transition-all group"
+                className="p-3 rounded-xl border border-white/10 bg-white/5 hover:border-white/30 text-left transition-all"
               >
-                <div className="text-[11px] font-bold text-amber-300 flex items-center justify-between">
+                <div className="text-xs font-semibold text-white flex items-center justify-between">
                   <span>Billing Cashier</span>
-                  <span className="text-[10px] font-mono opacity-60">POS</span>
+                  <span className="text-[10px] font-mono text-white/40">POS</span>
                 </div>
-                <div className="text-[10px] text-zinc-400 truncate mt-0.5">cashier@thegrandkitchen.com</div>
+                <div className="text-[10px] font-mono text-white/40 truncate mt-1">cashier@thegrandkitchen.com</div>
               </button>
             </div>
           </div>
@@ -151,63 +147,59 @@ function LoginForm() {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-300 block">
+              <label className="text-xs font-mono uppercase tracking-wider text-white/50 block">
                 Work Email / Staff ID
               </label>
-              <div className="relative">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@thegrandkitchen.com"
-                  className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500 transition-colors"
-                />
-              </div>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@thegrandkitchen.com"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/40 outline-none transition-colors"
+              />
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-zinc-300 block">
+                <label className="text-xs font-mono uppercase tracking-wider text-white/50 block">
                   Password
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-[11px] text-purple-400 hover:text-purple-300 transition-colors"
+                  className="text-[10px] font-mono text-white/40 hover:text-white transition-colors"
                 >
                   {showPassword ? "Hide password" : "Show password"}
                 </button>
               </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500 transition-colors"
-                />
-              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.02] text-sm text-white placeholder-white/20 focus:border-white/40 outline-none transition-colors"
+              />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 bg-[length:200%_auto] text-white text-sm font-bold shadow-lg shadow-purple-600/30 hover:opacity-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-3.5 px-4 rounded-xl bg-white text-black text-sm font-semibold hover:bg-white/90 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? (
                 <>
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-black" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Authenticating with MongoDB...
+                  <span>Authenticating with MongoDB...</span>
                 </>
               ) : (
                 <>
-                  Sign In to POS Terminal
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <span>Sign In to POS Terminal</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="5" y1="12" x2="19" y2="12" />
                     <polyline points="12 5 19 12 12 19" />
                   </svg>
@@ -217,8 +209,8 @@ function LoginForm() {
           </form>
 
           {/* Security Notice */}
-          <div className="pt-2 border-t border-white/5 text-center">
-            <p className="text-[11px] text-zinc-500">
+          <div className="pt-2 border-t border-white/10 text-center">
+            <p className="text-[10px] font-mono text-white/40">
               Encrypted session cookies with MongoDB user role verification.
             </p>
           </div>
@@ -226,8 +218,8 @@ function LoginForm() {
       </main>
 
       {/* Footer */}
-      <footer className="p-6 text-center text-xs text-zinc-600 relative z-10">
-        © {new Date().getFullYear()} The Grand Kitchen POS Systems. All rights reserved.
+      <footer className="p-6 text-center text-xs font-mono text-white/40">
+        &copy; {new Date().getFullYear()} The Grand Kitchen POS Systems. All rights reserved.
       </footer>
     </div>
   );
@@ -237,7 +229,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-black flex items-center justify-center text-zinc-400 text-sm">
+        <div className="min-h-screen bg-background flex items-center justify-center text-white/40 font-mono text-sm">
           Loading Staff Terminal...
         </div>
       }

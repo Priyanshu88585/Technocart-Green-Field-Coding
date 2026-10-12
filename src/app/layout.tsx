@@ -1,11 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Geist_Mono } from "next/font/google";
+import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/layout/AppShell";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
@@ -22,11 +27,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "The Grand Kitchen — Restaurant Billing",
+    default: "The Grand Kitchen — Restaurant CRM & POS Billing",
     template: "%s | The Grand Kitchen",
   },
   description:
-    "Premium restaurant billing and order management system. Create orders, manage menu, generate bills, and track revenue.",
+    "Architectural Restaurant CRM & POS Billing Suite. Live kitchen floor orchestration, real-time KOT dispatch, inventory catalog, and instant thermal settlement.",
   robots: { index: true, follow: true },
 };
 
@@ -38,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${geistMono.variable} font-sans antialiased bg-background text-foreground`}
+        className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-background text-foreground`}
       >
         <ToastProvider>
           <AppShell>{children}</AppShell>

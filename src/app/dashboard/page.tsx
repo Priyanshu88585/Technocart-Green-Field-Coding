@@ -4,6 +4,22 @@ import { formatCurrency } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
+// Standard dining floor layout (Tables T1 to T12 and Takeaway Bays)
+const FLOOR_TABLES = [
+  { id: "1", name: "T-01", capacity: "2-Top" },
+  { id: "2", name: "T-02", capacity: "2-Top" },
+  { id: "3", name: "T-03", capacity: "4-Top" },
+  { id: "4", name: "T-04", capacity: "4-Top" },
+  { id: "5", name: "T-05", capacity: "4-Top" },
+  { id: "6", name: "T-06", capacity: "6-Top" },
+  { id: "7", name: "T-07", capacity: "6-Top" },
+  { id: "8", name: "T-08", capacity: "8-Top" },
+  { id: "9", name: "T-09", capacity: "Private Booth" },
+  { id: "10", name: "T-10", capacity: "Window View" },
+  { id: "11", name: "T-11", capacity: "Chef Counter" },
+  { id: "12", name: "T-12", capacity: "Terrace VIP" },
+];
+
 export default async function DashboardPage() {
   const [stats, activeOrdersList] = await Promise.all([
     getDashboardStats(),
@@ -13,29 +29,43 @@ export default async function DashboardPage() {
   const averageOrderValue =
     stats.ordersToday > 0 ? Math.round(stats.revenueToday / stats.ordersToday) : 0;
 
+  // Map active orders to tables for real-time floor matrix
+  const tableOccupancyMap = new Map<string, typeof activeOrdersList[0]>();
+  for (const order of activeOrdersList) {
+    if (order.tableNumber) {
+      // Normalize table identifier (e.g., "1" or "T1" or "Table 1")
+      const num = order.tableNumber.replace(/\D/g, "");
+      if (num) tableOccupancyMap.set(num, order);
+    }
+  }
+
+  const occupiedCount = tableOccupancyMap.size;
+  const vacantCount = FLOOR_TABLES.length - occupiedCount;
+
   return (
-    <div className="min-h-full p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="min-h-full p-6 sm:p-8 lg:p-12 space-y-12 max-w-[1500px] mx-auto text-white">
       {/* Top Header / Welcome */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-white/[0.08]">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-white/10">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            POS Live Terminal
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
-            Restaurant Operations & Billing
+          <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 mb-3 tracking-widest uppercase">
+            <span className="w-12 h-px bg-white/20" />
+            Floor Operations & CRM Terminal
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)] animate-pulse" />
+          </span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+            Restaurant Operations.
           </h1>
-          <p className="text-sm text-zinc-400 mt-0.5">
-            Real-time table orders, kitchen pipeline, revenue overview, and billing settlement
+          <p className="text-sm sm:text-base text-white/40 mt-1 max-w-2xl">
+            Live kitchen order ticket pipeline, floor table occupancy, revenue metrics, and instant thermal settlement.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
             href="/orders/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium text-sm shadow-lg shadow-purple-600/25 hover:from-purple-500 hover:to-indigo-500 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="px-6 py-3 bg-white text-black text-sm font-semibold hover:bg-white/90 transition-all flex items-center justify-center gap-2 rounded-xl whitespace-nowrap"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
@@ -43,9 +73,9 @@ export default async function DashboardPage() {
           </Link>
           <Link
             href="/orders"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-zinc-200 text-sm font-medium hover:bg-white/[0.08] hover:text-white transition-all"
+            className="px-5 py-3 border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white text-sm font-semibold transition-all rounded-xl backdrop-blur-sm flex items-center justify-center gap-2 whitespace-nowrap"
           >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="3" y="3" width="7" height="7" rx="1" />
               <rect x="14" y="3" width="7" height="7" rx="1" />
               <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -59,144 +89,176 @@ export default async function DashboardPage() {
       {/* Primary KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Revenue Today */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-purple-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Today&apos;s Revenue
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-              <span className="font-semibold text-base">₹</span>
-            </div>
+        <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm hover:border-white/30 transition-all space-y-3">
+          <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
+            <span>Today&apos;s Revenue</span>
+            <span className="text-white/60 font-bold">₹ INR</span>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {formatCurrency(stats.revenueToday)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-emerald-400">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
-              </svg>
-              <span>Settled bills today</span>
-            </div>
+          <div className="text-3xl lg:text-4xl font-bold font-mono text-white tracking-tight">
+            {formatCurrency(stats.revenueToday)}
           </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-purple-600/10 rounded-full blur-2xl group-hover:bg-purple-600/20 transition-all" />
+          <div className="flex items-center gap-2 text-xs font-mono text-white/40 pt-1 border-t border-white/5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>Settled &amp; Billed in DB</span>
+          </div>
         </div>
 
-        {/* Orders Today */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-indigo-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Orders Count
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2h2" />
-                <rect x="8" y="2" width="8" height="4" rx="1" />
-              </svg>
-            </div>
+        {/* Orders Count */}
+        <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm hover:border-white/30 transition-all space-y-3">
+          <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
+            <span>Total Orders</span>
+            <span className="text-white/60 font-mono">COUNT</span>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {stats.ordersToday}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-400">
-              <span>Recorded today</span>
-            </div>
+          <div className="text-3xl lg:text-4xl font-bold font-mono text-white tracking-tight">
+            {stats.ordersToday}
           </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-600/10 rounded-full blur-2xl group-hover:bg-indigo-600/20 transition-all" />
+          <div className="flex items-center gap-2 text-xs font-mono text-white/40 pt-1 border-t border-white/5">
+            <span>Customer tickets today</span>
+          </div>
         </div>
 
         {/* Active Dining / Kitchen */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-amber-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Active Orders
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
+        <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm hover:border-white/30 transition-all space-y-3">
+          <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
+            <span>Active Pipeline</span>
+            <span className="text-amber-400/80 font-mono">LIVE</span>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 tracking-tight">
-              {stats.activeOrders}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-              <span>Tables / Takeaway pending</span>
-            </div>
+          <div className="text-3xl lg:text-4xl font-bold font-mono text-white tracking-tight">
+            {stats.activeOrders}
           </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-600/10 rounded-full blur-2xl group-hover:bg-amber-600/20 transition-all" />
+          <div className="flex items-center gap-2 text-xs font-mono text-white/40 pt-1 border-t border-white/5">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span>In-kitchen / awaiting bill</span>
+          </div>
         </div>
 
         {/* Average Order Value */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-emerald-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Avg. Ticket Size (AOV)
+        <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm hover:border-white/30 transition-all space-y-3">
+          <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
+            <span>Average Ticket (AOV)</span>
+            <span className="text-white/60 font-mono">AVG</span>
+          </div>
+          <div className="text-3xl lg:text-4xl font-bold font-mono text-white tracking-tight">
+            {formatCurrency(averageOrderValue)}
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono text-white/40 pt-1 border-t border-white/5">
+            <span>Per dining party</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Visual Floor Matrix Section (Extreme CRM Level Feature) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 tracking-wider uppercase">
+              <span className="w-8 h-px bg-white/20" />
+              Floor Table Matrix
             </span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="1" x2="12" y2="23" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </div>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-white/5 border border-white/10 text-white/70">
+              {occupiedCount} Occupied / {vacantCount} Available
+            </span>
           </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {formatCurrency(averageOrderValue)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-400">
-              <span>Per customer ticket</span>
-            </div>
-          </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-600/10 rounded-full blur-2xl group-hover:bg-emerald-600/20 transition-all" />
+          <span className="text-xs font-mono text-white/40 hidden sm:inline">
+            Click occupied table to bill or inspect
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {FLOOR_TABLES.map((t) => {
+            const activeOrder = tableOccupancyMap.get(t.id);
+            const isOccupied = !!activeOrder;
+
+            return (
+              <div
+                key={t.id}
+                className={`p-4 rounded-xl border transition-all ${
+                  isOccupied
+                    ? "border-amber-400/40 bg-amber-500/[0.04]"
+                    : "border-white/10 bg-background/40 hover:border-white/20"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-mono text-xs font-bold text-white">{t.name}</span>
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      isOccupied
+                        ? "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)] animate-pulse"
+                        : "bg-emerald-500/50"
+                    }`}
+                  />
+                </div>
+                <div className="text-[11px] font-mono text-white/40 mb-3">{t.capacity}</div>
+
+                {isOccupied && activeOrder ? (
+                  <div className="space-y-2 pt-2 border-t border-white/10">
+                    <div className="flex items-baseline justify-between text-xs font-mono">
+                      <span className="text-white/50">#{activeOrder.orderNumber}</span>
+                      <span className="font-bold text-white">
+                        {formatCurrency(activeOrder.totalInPaise)}
+                      </span>
+                    </div>
+                    <Link
+                      href={`/billing/${activeOrder.id}`}
+                      className="block text-center py-1.5 px-2 rounded-lg bg-white text-black text-[11px] font-semibold hover:bg-white/90 transition-all"
+                    >
+                      Instant Bill
+                    </Link>
+                  </div>
+                ) : (
+                  <Link
+                    href={`/orders/new?table=${t.id}`}
+                    className="block text-center py-1.5 px-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-[11px] font-mono transition-all"
+                  >
+                    + Assign Order
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
       {/* Active Orders Live Pipeline */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              Live Active Tables & Orders
-            </h2>
-            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-              {activeOrdersList.length} In-Progress
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 tracking-wider uppercase">
+              <span className="w-8 h-px bg-white/20" />
+              Kitchen Dispatch Pipeline
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-white/5 border border-white/10 text-white/70">
+              {activeOrdersList.length} Active
             </span>
           </div>
           <Link
             href="/orders"
-            className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium flex items-center gap-1"
+            className="text-xs font-mono text-white/50 hover:text-white transition-colors flex items-center gap-1.5"
           >
-            Manage all orders
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
+            Manage All Orders &rarr;
           </Link>
         </div>
 
         {activeOrdersList.length === 0 ? (
-          <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/[0.06] text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto text-purple-400">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <div className="p-12 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm text-center space-y-3">
+            <div className="w-10 h-10 rounded-xl border border-white/15 bg-white/5 flex items-center justify-center mx-auto text-white/60">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-zinc-300">No active orders right now</p>
-            <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-              All tables are settled and clear. Click &apos;Take New Order&apos; to start taking orders from customers.
+            <p className="text-sm font-semibold text-white">All tables are clear and settled</p>
+            <p className="text-xs font-mono text-white/40 max-w-sm mx-auto">
+              No orders pending in the kitchen. Launch a new order ticket to begin dining service.
             </p>
-            <Link
-              href="/orders/new"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/80 text-white text-xs font-medium hover:bg-purple-600 transition-colors"
-            >
-              Start New Order
-            </Link>
+            <div className="pt-2">
+              <Link
+                href="/orders/new"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-black text-xs font-semibold hover:bg-white/90 transition-all"
+              >
+                + New Order Ticket
+              </Link>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -208,7 +270,7 @@ export default async function DashboardPage() {
               return (
                 <div
                   key={order.id}
-                  className="p-5 rounded-2xl bg-zinc-900/70 border border-white/[0.08] hover:border-purple-500/40 transition-all flex flex-col justify-between space-y-4 group"
+                  className="p-5 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm hover:border-white/30 transition-all flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -216,56 +278,57 @@ export default async function DashboardPage() {
                         <span className="font-mono text-sm font-bold text-white">
                           #{order.orderNumber}
                         </span>
-                        <span
-                          className={`px-2 py-0.5 rounded-md text-[11px] font-semibold uppercase tracking-wider ${
-                            order.orderType === "dine-in"
-                              ? "bg-purple-500/15 text-purple-300 border border-purple-500/30"
-                              : "bg-blue-500/15 text-blue-300 border border-blue-500/30"
-                          }`}
-                        >
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-mono uppercase tracking-wider border border-white/10 bg-white/5 text-white/70">
                           {order.orderType}
                         </span>
                       </div>
-                      <span className="text-xs text-zinc-500 font-mono">{orderTime}</span>
+                      <span className="text-xs text-white/40 font-mono">{orderTime}</span>
                     </div>
 
                     <div className="flex items-baseline justify-between">
-                      <div className="text-lg font-bold text-zinc-100">
+                      <div className="text-base font-semibold text-white">
                         {order.tableNumber ? `Table ${order.tableNumber}` : "Takeaway / Parcel"}
                       </div>
-                      <div className="text-base font-bold text-purple-400 font-mono">
+                      <div className="text-base font-bold text-white font-mono">
                         {formatCurrency(order.totalInPaise)}
                       </div>
                     </div>
 
-                    {/* Order items preview */}
-                    <div className="space-y-1 pt-1 border-t border-white/[0.06]">
-                      <div className="text-xs text-zinc-400 font-medium">
-                        {order.items.length} items ordered:
+                    {/* Customer CRM note if present */}
+                    {order.note && (
+                      <div className="text-xs text-white/50 font-mono flex items-center gap-2">
+                        <span>{order.note}</span>
                       </div>
-                      <div className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
+                    )}
+
+                    {/* Order items preview */}
+                    <div className="space-y-1 pt-2 border-t border-white/10">
+                      <div className="text-[11px] font-mono text-white/40 uppercase tracking-wider">
+                        {order.items.length} items ordered
+                      </div>
+                      <div className="text-xs text-white/70 line-clamp-2 leading-relaxed font-mono">
                         {order.items.map((i) => `${i.itemName} (x${i.quantity})`).join(", ")}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
+                  <div className="flex items-center gap-2 pt-3 border-t border-white/10">
                     <Link
                       href={`/orders/${order.id}`}
-                      className="flex-1 text-center py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-semibold text-zinc-200 transition-colors"
+                      className="flex-1 text-center py-2 px-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-white transition-all"
                     >
-                      View & Settle
+                      Inspect KOT
                     </Link>
                     <Link
                       href={`/billing/${order.id}`}
-                      className="py-2 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-xs font-semibold text-purple-300 transition-colors flex items-center justify-center gap-1.5"
+                      className="py-2 px-4 rounded-xl bg-white text-black hover:bg-white/90 text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="6 9 6 2 18 2 18 9" />
                         <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
                         <rect x="6" y="14" width="12" height="8" />
                       </svg>
-                      Bill
+                      Bill &amp; Settle
                     </Link>
                   </div>
                 </div>
@@ -275,78 +338,79 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* Grid: Recent Orders & Top Selling Items */}
+      {/* Grid: Recent Order Stream & Sales Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Orders (2 cols) */}
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md space-y-4">
+        {/* Recent Orders Stream (2 cols) */}
+        <div className="lg:col-span-2 p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white tracking-tight">
+            <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 tracking-wider uppercase">
+              <span className="w-8 h-px bg-white/20" />
               Recent Order History
-            </h2>
+            </span>
             <Link
               href="/orders"
-              className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium"
+              className="text-xs font-mono text-white/50 hover:text-white transition-colors"
             >
-              View all
+              Full Ledger &rarr;
             </Link>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-white/[0.08] text-zinc-400 uppercase tracking-wider text-[11px]">
+                <tr className="border-b border-white/10 text-white/40 uppercase tracking-widest text-[10px] font-mono">
                   <th className="pb-3 font-semibold">Order</th>
-                  <th className="pb-3 font-semibold">Type / Table</th>
+                  <th className="pb-3 font-semibold">Table / Type</th>
                   <th className="pb-3 font-semibold">Items</th>
                   <th className="pb-3 font-semibold">Amount</th>
                   <th className="pb-3 font-semibold">Status</th>
                   <th className="pb-3 font-semibold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.05]">
+              <tbody className="divide-y divide-white/5">
                 {stats.recentOrders.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-6 text-center text-zinc-500">
+                    <td colSpan={6} className="py-8 text-center text-white/40 font-mono">
                       No orders placed today yet. New orders will appear here automatically.
                     </td>
                   </tr>
                 ) : (
                   stats.recentOrders.map((order) => (
                     <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="py-3 font-mono font-medium text-white">
+                      <td className="py-3.5 font-mono font-medium text-white">
                         #{order.orderNumber}
                       </td>
-                      <td className="py-3 text-zinc-300">
+                      <td className="py-3.5 text-white/80 font-mono">
                         <span className="capitalize">{order.orderType}</span>
                         {order.tableNumber && (
-                          <span className="text-zinc-500 ml-1">({order.tableNumber})</span>
+                          <span className="text-white/40 ml-1">({order.tableNumber})</span>
                         )}
                       </td>
-                      <td className="py-3 text-zinc-400">
+                      <td className="py-3.5 text-white/60 font-mono">
                         {order.items.length} items
                       </td>
-                      <td className="py-3 font-mono font-semibold text-zinc-100">
+                      <td className="py-3.5 font-mono font-bold text-white">
                         {formatCurrency(order.totalInPaise)}
                       </td>
-                      <td className="py-3">
+                      <td className="py-3.5">
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider border ${
                             order.status === "completed"
-                              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                               : order.status === "active"
-                              ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                              : "bg-red-500/15 text-red-400 border border-red-500/30"
+                              ? "border-amber-400/30 bg-amber-400/10 text-amber-300"
+                              : "border-red-500/30 bg-red-500/10 text-red-400"
                           }`}
                         >
                           {order.status}
                         </span>
                       </td>
-                      <td className="py-3 text-right">
+                      <td className="py-3.5 text-right">
                         <Link
                           href={`/orders/${order.id}`}
-                          className="text-purple-400 hover:text-purple-300 font-medium hover:underline"
+                          className="font-mono text-white/60 hover:text-white transition-colors"
                         >
-                          Details
+                          View &rarr;
                         </Link>
                       </td>
                     </tr>
@@ -357,38 +421,39 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Top Items (1 col) */}
-        <div className="p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md space-y-4">
+        {/* Top Selling Items & Quick Operations (1 col) */}
+        <div className="p-6 rounded-2xl border border-white/10 bg-background/50 backdrop-blur-sm space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Top Selling Dishes
-            </h2>
+            <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 tracking-wider uppercase">
+              <span className="w-8 h-px bg-white/20" />
+              Culinary Leaderboard
+            </span>
             <Link
               href="/menu"
-              className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium"
+              className="text-xs font-mono text-white/50 hover:text-white transition-colors"
             >
-              Menu
+              Menu &rarr;
             </Link>
           </div>
 
           <div className="space-y-3">
             {stats.topItems.length === 0 ? (
-              <p className="text-xs text-zinc-500 py-4 text-center">
-                No item sales recorded today yet
+              <p className="text-xs font-mono text-white/40 py-6 text-center">
+                No dish volume recorded today yet
               </p>
             ) : (
               stats.topItems.map((item, idx) => (
                 <div
                   key={item.name}
-                  className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]"
+                  className="flex items-center justify-between p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:border-white/15 transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 text-xs font-bold flex items-center justify-center font-mono">
-                      {idx + 1}
+                    <span className="font-mono text-xs font-semibold text-white/30">
+                      {(idx + 1).toString().padStart(2, "0")}
                     </span>
-                    <span className="text-xs font-semibold text-zinc-200">{item.name}</span>
+                    <span className="text-xs font-semibold text-white">{item.name}</span>
                   </div>
-                  <span className="text-xs font-mono font-medium text-zinc-400 bg-white/[0.04] px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-mono font-medium text-white/60 bg-white/5 px-2 py-0.5 rounded border border-white/10">
                     {item.quantity} sold
                   </span>
                 </div>
@@ -396,23 +461,23 @@ export default async function DashboardPage() {
             )}
           </div>
 
-          {/* Quick shortcuts widget */}
-          <div className="pt-4 border-t border-white/[0.08] space-y-2">
-            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block">
-              Quick Management
+          {/* Quick Management Shortcuts */}
+          <div className="pt-4 border-t border-white/10 space-y-2.5">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 block">
+              Operational Center
             </span>
             <div className="grid grid-cols-2 gap-2">
               <Link
                 href="/menu"
-                className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] text-xs font-medium text-zinc-300 text-center block transition-colors"
+                className="p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-white text-center block transition-all"
               >
-                🍽️ Manage Menu
+                Menu &amp; Dishes
               </Link>
               <Link
                 href="/settings"
-                className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] text-xs font-medium text-zinc-300 text-center block transition-colors"
+                className="p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-semibold text-white text-center block transition-all"
               >
-                ⚙️ Tax & Store Info
+                Store &amp; Tax Config
               </Link>
             </div>
           </div>

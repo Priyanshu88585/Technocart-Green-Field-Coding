@@ -183,7 +183,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
   return (
     <div className="space-y-6">
       {/* Header Toolbar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/10 backdrop-blur-sm">
         {/* Categories */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {categories.map((cat) => {
@@ -192,10 +192,10 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                   active
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
-                    : "bg-white/[0.03] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.06]"
+                    ? "bg-white text-black font-semibold shadow-sm"
+                    : "bg-white/[0.02] border border-white/10 text-white/50 hover:text-white hover:border-white/20"
                 }`}
               >
                 {cat}
@@ -206,9 +206,9 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
 
         {/* Search & Add Button */}
         <div className="flex items-center gap-3">
-          <div className="relative flex-1 sm:w-60">
+          <div className="relative flex-1 sm:w-64">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
               width="14"
               height="14"
               viewBox="0 0 24 24"
@@ -221,22 +221,22 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
             </svg>
             <input
               type="text"
-              placeholder="Search menu..."
+              placeholder="Search catalog..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500/50"
+              className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition-colors"
             />
           </div>
 
           <button
             onClick={openAddModal}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-md transition-all whitespace-nowrap"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black font-semibold text-xs tracking-wider uppercase hover:bg-white/90 shadow-sm transition-all whitespace-nowrap"
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-            Add New Dish
+            Add Dish
           </button>
         </div>
       </div>
@@ -246,25 +246,25 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
         {filteredItems.map((item) => (
           <div
             key={item.id}
-            className={`p-5 rounded-2xl border backdrop-blur-md transition-all flex flex-col justify-between space-y-4 ${
+            className={`p-5 rounded-2xl border backdrop-blur-sm transition-all flex flex-col justify-between space-y-4 ${
               !item.available
-                ? "bg-zinc-950/40 border-white/[0.04] opacity-75"
-                : "bg-zinc-900/60 border-white/[0.08] hover:border-purple-500/30"
+                ? "bg-white/[0.01] border-white/5 opacity-60"
+                : "bg-white/[0.02] border-white/10 hover:border-white/25"
             }`}
           >
             <div>
               <div className="flex items-start justify-between gap-2 mb-2">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-purple-400">
+                <span className="text-[10px] font-mono tracking-widest uppercase text-white/40">
                   {item.category}
                 </span>
 
                 {/* Instant Availability Switch */}
                 <button
                   onClick={() => handleToggleAvailability(item)}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-semibold uppercase tracking-wider transition-colors ${
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-mono uppercase tracking-wider transition-colors border ${
                     item.available
-                      ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25"
-                      : "bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500/25"
+                      ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20"
+                      : "bg-rose-500/10 text-rose-300 border-rose-500/30 hover:bg-rose-500/20"
                   }`}
                   title="Click to toggle availability"
                 >
@@ -274,13 +274,13 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
 
               <h3 className="text-sm font-bold text-white line-clamp-1">{item.name}</h3>
               {item.description && (
-                <p className="text-xs text-zinc-400 line-clamp-2 mt-1 leading-relaxed">
+                <p className="text-xs text-white/40 line-clamp-2 mt-1 leading-relaxed">
                   {item.description}
                 </p>
               )}
             </div>
 
-            <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+            <div className="pt-3 border-t border-white/10 flex items-center justify-between">
               <span className="text-base font-bold text-white font-mono">
                 {formatCurrency(item.priceInPaise)}
               </span>
@@ -288,16 +288,16 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => openEditModal(item)}
-                  className="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 text-xs font-semibold transition-colors"
+                  className="px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-white/70 text-xs font-mono transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(item)}
-                  className="p-1 rounded-lg hover:bg-rose-500/10 text-zinc-500 hover:text-rose-400 transition-colors"
+                  className="p-1 rounded-lg hover:bg-rose-500/10 text-white/30 hover:text-rose-400 transition-colors"
                   title="Delete Item"
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
@@ -311,14 +311,17 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
       {/* Add / Edit Dish Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-md p-6 rounded-2xl bg-zinc-900 border border-white/[0.1] shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
-              <h3 className="text-base font-bold text-white">
-                {editingItem ? "Edit Menu Dish" : "Add New Dish"}
-              </h3>
+          <div className="w-full max-w-md p-6 rounded-2xl bg-[#0c0d12] border border-white/15 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-px bg-white/20" />
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+                  {editingItem ? "Edit Menu Dish" : "Add New Dish"}
+                </h3>
+              </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-zinc-400 hover:text-white text-sm"
+                className="text-white/40 hover:text-white text-sm"
               >
                 ✕
               </button>
@@ -326,28 +329,28 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-zinc-300 block mb-1">
+                <label className="text-xs font-mono uppercase tracking-wider text-white/40 block mb-1">
                   Dish Name *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Kadai Paneer, Tandoori Roti"
+                  placeholder="e.g. Butter Chicken, Tandoori Roti"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-white/[0.1] text-xs text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-300 block mb-1">
+                  <label className="text-xs font-mono uppercase tracking-wider text-white/40 block mb-1">
                     Category
                   </label>
                   <select
                     value={formCategory}
                     onChange={(e) => setFormCategory(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-white/[0.1] text-xs text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-xl bg-[#0c0d12] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
                   >
                     {DEFAULT_CATEGORIES.map((c) => (
                       <option key={c} value={c}>
@@ -358,7 +361,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-zinc-300 block mb-1">
+                  <label className="text-xs font-mono uppercase tracking-wider text-white/40 block mb-1">
                     Price (₹) *
                   </label>
                   <input
@@ -369,34 +372,34 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                     value={formPriceRupees || ""}
                     onChange={(e) => setFormPriceRupees(parseFloat(e.target.value) || 0)}
                     placeholder="250"
-                    className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-white/[0.1] text-xs font-mono text-white focus:outline-none focus:border-purple-500"
+                    className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs font-mono text-white focus:outline-none focus:border-white/30 transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-medium text-zinc-300 block mb-1">
+                <label className="text-xs font-mono uppercase tracking-wider text-white/40 block mb-1">
                   Custom Category (optional)
                 </label>
                 <input
                   type="text"
-                  placeholder="Or enter new category name"
+                  placeholder="Or enter new category"
                   value={formCustomCategory}
                   onChange={(e) => setFormCustomCategory(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-white/[0.1] text-xs text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-zinc-300 block mb-1">
+                <label className="text-xs font-mono uppercase tracking-wider text-white/40 block mb-1">
                   Description / Ingredients
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Brief description of the dish"
+                  placeholder="Brief culinary notes and recipe details"
                   value={formDescription}
                   onChange={(e) => setFormDescription(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-zinc-950 border border-white/[0.1] text-xs text-white focus:outline-none focus:border-purple-500"
+                  className="w-full px-3 py-2 rounded-xl bg-white/[0.02] border border-white/10 text-xs text-white focus:outline-none focus:border-white/30 transition-colors"
                 />
               </div>
 
@@ -406,25 +409,25 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   id="availCheck"
                   checked={formAvailable}
                   onChange={(e) => setFormAvailable(e.target.checked)}
-                  className="rounded border-white/20 bg-zinc-950 text-purple-600 focus:ring-0"
+                  className="rounded border-white/20 bg-black text-white focus:ring-0"
                 />
-                <label htmlFor="availCheck" className="text-xs text-zinc-300 select-none cursor-pointer">
-                  Available in POS & Taking Orders
+                <label htmlFor="availCheck" className="text-xs text-white/60 select-none cursor-pointer font-mono">
+                  Available in POS & Kitchen Terminal
                 </label>
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-white/10">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 text-xs font-semibold transition-colors"
+                  className="px-4 py-2 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/10 text-white/60 text-xs font-mono transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-md"
+                  className="px-5 py-2 rounded-xl bg-white text-black text-xs font-bold tracking-wider uppercase hover:bg-white/90 transition-all shadow-sm"
                 >
                   {isSubmitting ? "Saving..." : editingItem ? "Update Dish" : "Create Dish"}
                 </button>
