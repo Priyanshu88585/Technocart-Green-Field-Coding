@@ -70,7 +70,6 @@ export function InvoiceClient({
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto text-white">
-      {/* Control Actions Header (Hidden in Print) */}
       <div className="no-print flex items-center justify-between p-4 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm">
         <div className="flex items-center gap-3">
           <Link
@@ -110,9 +109,7 @@ export function InvoiceClient({
         </div>
       </div>
 
-      {/* The Printable Bill Container */}
       <div className="print-receipt bg-background sm:rounded-2xl border border-white/20 p-6 sm:p-10 text-white relative shadow-sm">
-        {/* Restaurant Branding Header */}
         <div className="text-center pb-6 border-b border-dashed border-white/20 print:border-black/30 space-y-2 flex flex-col items-center">
           <div className="w-16 h-16 rounded-2xl border border-white/20 print:border-black/20 bg-black/20 print:bg-transparent overflow-hidden flex items-center justify-center mx-auto mb-1">
             <Image
@@ -143,7 +140,6 @@ export function InvoiceClient({
           </div>
         </div>
 
-        {/* Invoice Metadata */}
         <div className="py-4 border-b border-dashed border-white/20 print:border-black/30 grid grid-cols-2 text-xs text-white/80 print:text-black gap-y-1.5 font-mono">
           <div>
             <span className="text-white/40 print:text-zinc-600">Bill No:</span>{" "}
@@ -164,7 +160,6 @@ export function InvoiceClient({
           </div>
         </div>
 
-        {/* Itemized Table */}
         <div className="py-4 border-b border-dashed border-white/20 print:border-black/30">
           <table className="w-full text-xs">
             <thead>
@@ -192,7 +187,6 @@ export function InvoiceClient({
           </table>
         </div>
 
-        {/* Financial Summary */}
         <div className="py-4 border-b border-dashed border-white/20 print:border-black/30 space-y-1.5 text-xs text-white/80 print:text-black font-mono">
           <div className="flex justify-between">
             <span>Subtotal ({order.items.reduce((s, i) => s + i.quantity, 0)} items)</span>
@@ -206,7 +200,6 @@ export function InvoiceClient({
             </div>
           )}
 
-          {/* Tax Breakdown */}
           {order.taxInPaise > 0 && (
             <>
               <div className="flex justify-between text-white/50 print:text-black text-[11px]">
@@ -227,14 +220,12 @@ export function InvoiceClient({
             </div>
           )}
 
-          {/* Grand Total Row */}
           <div className="pt-2 border-t-2 border-white/30 print:border-black flex justify-between items-baseline text-sm sm:text-base font-bold text-white print:text-black">
             <span>NET TOTAL</span>
             <span>{formatCurrency(order.totalInPaise, settings.currencySymbol)}</span>
           </div>
         </div>
 
-        {/* Payments Summary */}
         <div className="py-4 border-b border-dashed border-white/20 print:border-black/30 space-y-1 text-xs text-white/80 print:text-black font-mono">
           <div className="flex justify-between">
             <span>Paid Amount</span>
@@ -260,7 +251,6 @@ export function InvoiceClient({
           )}
         </div>
 
-        {/* Footer Greetings */}
         <div className="pt-6 text-center space-y-1 text-xs text-white/40 print:text-zinc-700">
           <p className="font-semibold text-white print:text-black">{settings.receiptFooter}</p>
           <p className="text-[10px] font-mono text-white/30 print:text-zinc-500">

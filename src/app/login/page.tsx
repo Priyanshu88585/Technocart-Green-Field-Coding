@@ -57,7 +57,6 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-white selection:text-black">
-      {/* Top Navbar */}
       <header className="p-6 max-w-[1500px] w-full mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3.5 group">
           <div className="w-10 h-10 rounded-xl border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center group-hover:border-white/50 transition-colors shrink-0">
@@ -87,7 +86,6 @@ function LoginForm() {
         </Link>
       </header>
 
-      {/* Center Auth Card */}
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md rounded-2xl border border-white/25 bg-background/80 backdrop-blur-xl p-8 sm:p-10 space-y-6 shadow-2xl">
           <div className="flex items-center gap-4">
@@ -111,7 +109,6 @@ function LoginForm() {
             Sign in with your verified credentials to access POS billing, kitchen orders, and store operations.
           </p>
 
-          {/* Error Banner */}
           {error && (
             <div className="p-3.5 rounded-xl border border-red-500/40 bg-red-500/10 text-red-300 text-xs font-mono flex items-center gap-2.5">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -123,7 +120,6 @@ function LoginForm() {
             </div>
           )}
 
-          {/* Quick-Fill Demo Credentials Selector */}
           <div className="p-4 rounded-xl border border-white/20 bg-white/[0.02] space-y-2.5">
             <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-white/40">
               <span>Quick Demo Accounts</span>
@@ -156,7 +152,6 @@ function LoginForm() {
             </div>
           </div>
 
-          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-mono uppercase tracking-wider text-white/50 block">
@@ -220,7 +215,6 @@ function LoginForm() {
             </button>
           </form>
 
-          {/* Security Notice */}
           <div className="pt-2 border-t border-white/20 text-center">
             <p className="text-[10px] font-mono text-white/40">
               Encrypted session cookies with MongoDB user role verification.
@@ -229,7 +223,6 @@ function LoginForm() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="p-6 text-center text-xs font-mono text-white/40">
         &copy; {new Date().getFullYear()} The Grand Kitchen POS Systems. All rights reserved.
       </footer>

@@ -183,9 +183,7 @@ export function OrderTerminal({
 
   return (
     <div className="flex flex-col lg:flex-row h-full max-h-screen overflow-hidden text-white bg-background">
-      {/* LEFT SECTION: Item Catalog (Scrollable) */}
       <div className="flex-1 flex flex-col min-w-0 border-r border-white/20 bg-background/50 overflow-hidden">
-        {/* Top Control Bar: Search & Categories */}
         <div className="p-4 sm:p-6 border-b border-white/20 space-y-4 bg-background/80 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
@@ -222,7 +220,6 @@ export function OrderTerminal({
             </span>
           </div>
 
-          {/* Category Chips */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {categories.map((cat) => {
               const active = selectedCategory === cat;
@@ -243,7 +240,6 @@ export function OrderTerminal({
           </div>
         </div>
 
-        {/* Menu Items Grid */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {filteredItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -342,9 +338,7 @@ export function OrderTerminal({
         </div>
       </div>
 
-      {/* RIGHT SECTION: Cart & Billing Sidebar */}
       <div className="w-full lg:w-[420px] xl:w-[460px] flex flex-col bg-background/95 border-l border-white/20 h-full overflow-hidden">
-        {/* Order Header / Dine-in vs Takeaway Toggle */}
         <div className="p-4 sm:p-5 border-b border-white/20 space-y-4 bg-background/80">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
@@ -363,7 +357,6 @@ export function OrderTerminal({
             )}
           </div>
 
-          {/* Dine-In vs Takeaway Toggle */}
           <div className="grid grid-cols-2 p-1 rounded-xl border border-white/20 bg-white/[0.02]">
             <button
               onClick={() => setOrderType("dine-in")}
@@ -387,7 +380,6 @@ export function OrderTerminal({
             </button>
           </div>
 
-          {/* Table Selector (Only for Dine-in) */}
           {orderType === "dine-in" && (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-mono text-white/40">
@@ -427,7 +419,6 @@ export function OrderTerminal({
             </div>
           )}
 
-          {/* Customer CRM Capture (Extreme Level Feature) */}
           <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/20">
             <input
               type="text"
@@ -446,7 +437,6 @@ export function OrderTerminal({
           </div>
         </div>
 
-        {/* Cart Items List (Scrollable) */}
         <div className="flex-1 overflow-y-auto p-4 divide-y divide-white/10">
           {cart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-48 text-center text-white/40 space-y-2">
@@ -472,7 +462,6 @@ export function OrderTerminal({
                   </div>
                 </div>
 
-                {/* Qty controller */}
                 <div className="flex items-center gap-1.5 border border-white/20 bg-white/[0.03] rounded-lg p-1">
                   <button
                     onClick={() => updateQuantity(item.menuItemId, -1)}
@@ -491,7 +480,6 @@ export function OrderTerminal({
                   </button>
                 </div>
 
-                {/* Line total */}
                 <div className="text-right min-w-[70px]">
                   <div className="font-mono text-xs font-bold text-white">
                     {formatCurrency(item.unitPriceInPaise * item.quantity, settings.currencySymbol)}
@@ -508,9 +496,7 @@ export function OrderTerminal({
           )}
         </div>
 
-        {/* Order Notes & Calculations Footer */}
         <div className="p-4 sm:p-5 border-t border-white/20 bg-background/90 space-y-3">
-          {/* Notes Input */}
           <input
             type="text"
             placeholder="Kitchen notes (e.g. less spicy, allergy warning)"
@@ -519,7 +505,6 @@ export function OrderTerminal({
             className="w-full px-3 py-1.5 rounded-lg border border-white/20 bg-white/[0.02] text-xs text-white placeholder-white/30 focus:border-white/40 outline-none transition-colors"
           />
 
-          {/* Discount & Calculations */}
           <div className="space-y-1.5 text-xs font-mono">
             <div className="flex items-center justify-between text-white/50">
               <span>Subtotal ({cart.length} items)</span>
@@ -528,7 +513,6 @@ export function OrderTerminal({
               </span>
             </div>
 
-            {/* Discount selector */}
             <div className="flex items-center justify-between text-white/50">
               <div className="flex items-center gap-1.5">
                 <span>Discount %</span>
@@ -547,7 +531,6 @@ export function OrderTerminal({
               </span>
             </div>
 
-            {/* Tax */}
             <div className="flex items-center justify-between text-white/50">
               <span>GST ({settings.defaultTax}%)</span>
               <span className="text-white">
@@ -555,7 +538,6 @@ export function OrderTerminal({
               </span>
             </div>
 
-            {/* Service Charge if applicable */}
             {settings.defaultService > 0 && (
               <div className="flex items-center justify-between text-white/50">
                 <span>Service Charge ({settings.defaultService}%)</span>
@@ -565,7 +547,6 @@ export function OrderTerminal({
               </div>
             )}
 
-            {/* Grand Total */}
             <div className="pt-2 border-t border-white/20 flex items-baseline justify-between">
               <span className="text-xs uppercase tracking-widest text-white/40">
                 Total Amount
@@ -576,7 +557,6 @@ export function OrderTerminal({
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             onClick={handlePlaceOrder}
             disabled={isSubmitting || cart.length === 0}

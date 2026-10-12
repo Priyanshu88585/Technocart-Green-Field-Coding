@@ -182,9 +182,7 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
 
   return (
     <div className="space-y-6">
-      {/* Header Toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm">
-        {/* Categories */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {categories.map((cat) => {
             const active = selectedCategory === cat;
@@ -204,7 +202,6 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
           })}
         </div>
 
-        {/* Search & Add Button */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1 sm:w-64">
             <svg
@@ -241,7 +238,6 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
         </div>
       </div>
 
-      {/* Dishes Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
         {filteredItems.map((item) => (
           <div
@@ -258,7 +254,6 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
                   {item.category}
                 </span>
 
-                {/* Instant Availability Switch */}
                 <button
                   onClick={() => handleToggleAvailability(item)}
                   className={`px-2 py-0.5 rounded-md text-[10px] font-mono uppercase tracking-wider transition-colors border ${
@@ -308,7 +303,6 @@ export function MenuManagementClient({ initialItems }: { initialItems: MenuItem[
         ))}
       </div>
 
-      {/* Add / Edit Dish Modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-md p-6 rounded-2xl bg-[#0c0d12] border border-white/25 shadow-2xl space-y-4">

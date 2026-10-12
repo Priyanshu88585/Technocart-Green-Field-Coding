@@ -42,7 +42,6 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
-      {/* Restaurant Profile Card */}
       <div className="p-6 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm space-y-4">
         <div className="flex items-center gap-2">
           <span className="w-6 h-px bg-white/30" />
@@ -57,7 +56,6 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
           This information appears on customer tax invoices, thermal printouts, and digital bills.
         </p>
 
-        {/* Brand Mark Display */}
         <div className="flex items-center gap-4 p-4 rounded-xl border border-white/20 bg-white/[0.02]">
           <div className="w-16 h-16 rounded-xl border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center shrink-0">
             <Image
@@ -128,7 +126,6 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
         </div>
       </div>
 
-      {/* Taxation & Billing Rates */}
       <div className="p-6 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm space-y-4">
         <div className="flex items-center gap-2">
           <span className="w-6 h-px bg-white/30" />
@@ -189,7 +186,6 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
         </div>
       </div>
 
-      {/* Thermal Receipt Customization */}
       <div className="p-6 rounded-2xl bg-background/50 border border-white/20 backdrop-blur-md shadow-sm space-y-4">
         <div className="flex items-center gap-2">
           <span className="w-6 h-px bg-white/30" />
@@ -215,7 +211,6 @@ export function SettingsClient({ initialSettings }: { initialSettings: Settings 
         </div>
       </div>
 
-      {/* Submit Button */}
       <div className="flex items-center justify-end">
         <button
           type="submit"

@@ -181,7 +181,6 @@ export function OrderDetailClient({
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto text-white">
-      {/* Top Details Header Card */}
       <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
@@ -227,7 +226,6 @@ export function OrderDetailClient({
           </div>
         </div>
 
-        {/* Top Action Buttons */}
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href={`/billing/${order.id}`}
@@ -261,7 +259,6 @@ export function OrderDetailClient({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Ordered Items List & Add Item (2 cols) */}
         <div className="lg:col-span-2 space-y-6">
           <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm space-y-4">
             <div className="flex items-center justify-between">
@@ -283,7 +280,6 @@ export function OrderDetailClient({
               )}
             </div>
 
-            {/* Expandable Add Item Form */}
             {showAddItem && (
               <form
                 onSubmit={handleAddItem}
@@ -327,7 +323,6 @@ export function OrderDetailClient({
               </form>
             )}
 
-            {/* Items Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
@@ -358,7 +353,6 @@ export function OrderDetailClient({
             </div>
           </div>
 
-          {/* Payment History & Settlement */}
           <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">
@@ -413,7 +407,6 @@ export function OrderDetailClient({
               <p className="text-xs font-mono text-white/40 py-2">No payment entries recorded yet.</p>
             )}
 
-            {/* Record Payment Form (if balance remaining) */}
             {balanceRemaining > 0 && order.status !== "cancelled" && (
               <form
                 onSubmit={handleRecordPayment}
@@ -481,7 +474,6 @@ export function OrderDetailClient({
           </div>
         </div>
 
-        {/* Right Column: Financial Calculation Summary Card (1 col) */}
         <div className="space-y-6">
           <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm space-y-4">
             <h2 className="text-sm font-bold text-white tracking-tight uppercase font-mono text-white/50">

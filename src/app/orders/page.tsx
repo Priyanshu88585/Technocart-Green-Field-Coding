@@ -13,7 +13,6 @@ export default async function OrdersPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
-      {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-white/20">
         <div>
           <div className="flex items-center gap-2">

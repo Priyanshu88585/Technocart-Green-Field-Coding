@@ -4,7 +4,6 @@ import { formatCurrency } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
-// Standard dining floor layout (Tables T1 to T12 and Takeaway Bays)
 const FLOOR_TABLES = [
   { id: "1", name: "T-01", capacity: "2-Top" },
   { id: "2", name: "T-02", capacity: "2-Top" },
@@ -29,11 +28,9 @@ export default async function DashboardPage() {
   const averageOrderValue =
     stats.ordersToday > 0 ? Math.round(stats.revenueToday / stats.ordersToday) : 0;
 
-  // Map active orders to tables for real-time floor matrix
   const tableOccupancyMap = new Map<string, typeof activeOrdersList[0]>();
   for (const order of activeOrdersList) {
     if (order.tableNumber) {
-      // Normalize table identifier (e.g., "1" or "T1" or "Table 1")
       const num = order.tableNumber.replace(/\D/g, "");
       if (num) tableOccupancyMap.set(num, order);
     }
@@ -44,7 +41,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="min-h-full p-6 sm:p-8 lg:p-12 space-y-12 max-w-[1500px] mx-auto text-white">
-      {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 pb-6 border-b border-white/20">
         <div>
           <span className="inline-flex items-center gap-3 text-xs sm:text-sm font-mono text-white/40 mb-3 tracking-widest uppercase">
@@ -86,9 +82,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Primary KPI Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Revenue Today */}
         <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm hover:border-white/40 transition-all space-y-3">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
             <span>Today&apos;s Revenue</span>
@@ -103,7 +97,6 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Orders Count */}
         <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm hover:border-white/40 transition-all space-y-3">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
             <span>Total Orders</span>
@@ -117,7 +110,6 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Active Dining / Kitchen */}
         <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm hover:border-white/40 transition-all space-y-3">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
             <span>Active Pipeline</span>
@@ -132,7 +124,6 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Average Order Value */}
         <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm hover:border-white/40 transition-all space-y-3">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-widest text-white/40">
             <span>Average Ticket (AOV)</span>
@@ -147,7 +138,6 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Visual Floor Matrix Section (Extreme CRM Level Feature) */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -219,7 +209,6 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Active Orders Live Pipeline */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -294,14 +283,12 @@ export default async function DashboardPage() {
                       </div>
                     </div>
 
-                    {/* Customer CRM note if present */}
                     {order.note && (
                       <div className="text-xs text-white/50 font-mono flex items-center gap-2">
                         <span>{order.note}</span>
                       </div>
                     )}
 
-                    {/* Order items preview */}
                     <div className="space-y-1 pt-2 border-t border-white/20">
                       <div className="text-[11px] font-mono text-white/40 uppercase tracking-wider">
                         {order.items.length} items ordered
@@ -338,9 +325,7 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* Grid: Recent Order Stream & Sales Analytics */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Orders Stream (2 cols) */}
         <div className="lg:col-span-2 p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm space-y-4">
           <div className="flex items-center justify-between">
             <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 tracking-wider uppercase">
@@ -421,7 +406,6 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Top Selling Items & Quick Operations (1 col) */}
         <div className="p-6 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm space-y-6">
           <div className="flex items-center justify-between">
             <span className="inline-flex items-center gap-2 text-xs font-mono text-white/40 tracking-wider uppercase">
@@ -461,7 +445,6 @@ export default async function DashboardPage() {
             )}
           </div>
 
-          {/* Quick Management Shortcuts */}
           <div className="pt-4 border-t border-white/20 space-y-2.5">
             <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 block">
               Operational Center

@@ -88,9 +88,7 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
 
   return (
     <div className="space-y-6 text-white max-w-[1500px] mx-auto">
-      {/* Search & Filter Toolbar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-md shadow-sm">
-        {/* Status Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
             { id: "all", label: "All Orders" },
@@ -115,7 +113,6 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
           })}
         </div>
 
-        {/* Right filters: Order Type & Search */}
         <div className="flex items-center gap-3">
           <select
             value={selectedType}
@@ -151,7 +148,6 @@ export function OrdersListClient({ initialOrders }: { initialOrders: Order[] }) 
         </div>
       </div>
 
-      {/* Orders Table / Cards */}
       {filteredOrders.length === 0 ? (
         <div className="p-12 rounded-2xl border border-white/20 bg-background/50 backdrop-blur-sm text-center space-y-3">
           <div className="w-10 h-10 rounded-xl border border-white/25 bg-white/5 flex items-center justify-center mx-auto text-white/60 font-mono">

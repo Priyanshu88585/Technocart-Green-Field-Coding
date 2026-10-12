@@ -134,7 +134,6 @@ export function Sidebar() {
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        {/* Brand header */}
         <div className="flex items-center gap-3 px-5 h-16 border-b border-white/20 shrink-0">
           <div className="w-9 h-9 rounded-lg border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center shrink-0">
             <Image
@@ -161,7 +160,6 @@ export function Sidebar() {
           </button>
         </div>
 
-        {/* Primary nav links */}
         <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto">
           {navItems.map((item) => {
             const active = isActive(item.href);
@@ -182,7 +180,6 @@ export function Sidebar() {
             );
           })}
 
-          {/* Public Landing Link */}
           <div className="pt-4 mt-4 border-t border-white/20">
             <Link
               href="/"
@@ -198,7 +195,6 @@ export function Sidebar() {
           </div>
         </nav>
 
-        {/* Authenticated User Bar & Logout */}
         <div className="p-3.5 border-t border-white/20 bg-white/[0.02] space-y-3">
           <div className="flex items-center gap-3 px-1.5">
             <div className="w-9 h-9 rounded-xl border border-white/25 bg-white/5 flex items-center justify-center text-xs font-mono font-bold text-white">
