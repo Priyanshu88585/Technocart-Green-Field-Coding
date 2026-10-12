@@ -51,9 +51,15 @@ export const settingsSchema = z.object({
   receiptFooter: z.string().max(300),
 });
 
+export const loginSchema = z.object({
+  email: z.string().email("Valid email address is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
 export type MenuItemInput = z.infer<typeof menuItemSchema>;
 export type OrderItemInput = z.infer<typeof orderItemSchema>;
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
 export type PaymentInput = z.infer<typeof paymentSchema>;
 export type SettingsInput = z.infer<typeof settingsSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;

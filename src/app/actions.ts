@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { calculateBill, calculateLineTotal } from "@/lib/money";
-import { createOrderSchema, menuItemSchema, paymentSchema, settingsSchema } from "@/lib/validations";
+import { createOrderSchema, menuItemSchema, paymentSchema, settingsSchema, loginSchema } from "@/lib/validations";
+import { verifyPassword, setAuthCookie, clearAuthCookie, getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
 export async function getMenuItems() {
@@ -345,3 +346,52 @@ export async function getDashboardStats() {
     })),
   };
 }
+
+export async function loginUser(data: unknown) {
+  const parsed = loginSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message || "Invalid email or password" };
+  }
+
+  const { email, password } = parsed.data;
+  const user = await prisma.user.findUnique({
+    where: { email: email.toLowerCase().trim() },
+  });
+
+  if (!user) {
+    return { error: "No account found with this email address" };
+  }
+
+  const isPasswordValid = await verifyPassword(password, user.password);
+  if (!isPasswordValid) {
+    return { error: "Incorrect password. Please verify credentials." };
+  }
+
+  await setAuthCookie({
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    role: user.role as "ADMIN" | "MANAGER" | "CASHIER",
+  });
+
+  return {
+    data: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  };
+}
+
+export async function logoutUser() {
+  await clearAuthCookie();
+  revalidatePath("/");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function getAuthUser() {
+  return getCurrentUser();
+}
+

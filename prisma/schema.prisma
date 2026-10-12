@@ -80,3 +80,14 @@ model RestaurantSettings {
   receiptFooter  String   @default("Thank you for dining with us!")
   updatedAt      DateTime @updatedAt
 }
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("ADMIN")
+  phone     String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

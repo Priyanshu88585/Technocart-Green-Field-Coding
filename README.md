@@ -10,7 +10,23 @@ Developed for the **Technical Assessment: Restaurant Billing & Management System
 
 The application models the end-to-end lifecycle of a high-volume restaurant:
 
-### 1. 📊 Executive Operations & Live Dashboard (`/`)
+### 0. 🌟 Luxury Restaurant Showcase & Landing Page (`/`)
+- **Restaurant Details & Heritage**: Live showcase of The Grand Kitchen's fine dining story, culinary philosophy, and chef specialties fetched dynamically from MongoDB.
+- **Hero Access Credentials**: Prominent hero banner detailing the verified login IDs and passwords for immediate assessment access.
+- **Direct Login Shortcut**: One-click quick-fill navigation directly to the staff terminal.
+
+### 🔐 Verified Management Credentials (In Hero Section)
+| Role | Email / Login ID | Password | Scope & Permissions |
+|---|---|---|---|
+| **Store General Manager (Admin)** | `admin@thegrandkitchen.com` | `GrandAdmin123!` | Full financial analytics, menu CRUD, tax settings, table ops |
+| **Billing Operator (Cashier)** | `cashier@thegrandkitchen.com` | `Cashier123!` | High-speed POS orders, table split settlement, 80mm bills |
+
+### 🛡️ MongoDB Authentication & Route Middleware
+- **Encrypted Session Cookies**: HMAC-SHA256 token verification with 7-day session validity.
+- **Edge Route Protection**: Unauthenticated access to `/dashboard`, `/orders`, `/menu`, `/settings`, or `/billing` is intercepted by Next.js middleware and redirected to `/login`.
+- **Zero Dummy Data**: Test/dummy orders removed. Database operates exclusively with authentic 24 fine-dining dishes and real restaurant profile.
+
+### 1. 📊 Executive Operations & Live Dashboard (`/dashboard`)
 - **Real-Time KPIs**: Today's Revenue (in INR ₹), Total Orders Count, Live Active Tables in Kitchen/Dining, and Average Order Value (AOV).
 - **Live Dining Pipeline**: Real-time cards showing active table numbers, order type (Dine-in vs. Takeaway), item counts, time elapsed, and quick buttons to settle payments or view bills.
 - **Top Dishes Sold**: Leaderboard of top-selling dishes with quantities sold and revenue share.

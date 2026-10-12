@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { logoutUser, getAuthUser } from "@/app/actions";
+import { useToast } from "@/components/ui/ToastProvider";
 
 const navItems = [
   {
-    label: "Dashboard",
-    href: "/",
+    label: "POS Dashboard",
+    href: "/dashboard",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -29,7 +31,7 @@ const navItems = [
     ),
   },
   {
-    label: "Orders",
+    label: "All Orders",
     href: "/orders",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -41,7 +43,7 @@ const navItems = [
     ),
   },
   {
-    label: "Menu",
+    label: "Menu Catalog",
     href: "/menu",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -50,7 +52,7 @@ const navItems = [
     ),
   },
   {
-    label: "Settings",
+    label: "Tax & Settings",
     href: "/settings",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -61,19 +63,52 @@ const navItems = [
   },
 ];
 
+interface UserProfile {
+  name: string;
+  email: string;
+  role: string;
+}
+
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { addToast } = useToast();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+    getAuthUser().then((res) => {
+      if (res) {
+        setUser({
+          name: res.name,
+          email: res.email,
+          role: res.role,
+        });
+      }
+    });
+  }, []);
 
   const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await logoutUser();
+      addToast("You have been logged out.", "info");
+      router.push("/");
+      router.refresh();
+    } catch {
+      setLoggingOut(false);
+    }
   };
 
   return (
     <>
       <button
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-xl bg-surface-elevated border border-border"
+        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-xl bg-surface-elevated border border-border shadow-lg"
         onClick={() => setMobileOpen(true)}
         aria-label="Open navigation"
       >
@@ -90,10 +125,11 @@ export function Sidebar() {
       )}
 
       <aside
-        className={`no-print fixed lg:static inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border flex flex-col transition-transform duration-300 ease-out ${
+        className={`no-print fixed lg:static inset-y-0 left-0 z-50 w-64 bg-surface border-r border-border flex flex-col transition-transform duration-300 ease-out shrink-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
+        {/* Brand header */}
         <div className="flex items-center gap-3 px-5 h-16 border-b border-border shrink-0">
           <div className="w-9 h-9 rounded-xl bg-accent/20 flex items-center justify-center">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-accent">
@@ -104,7 +140,7 @@ export function Sidebar() {
           </div>
           <div>
             <h1 className="text-sm font-bold tracking-tight text-foreground">The Grand Kitchen</h1>
-            <p className="text-[10px] text-muted-foreground tracking-wide uppercase">Billing System</p>
+            <p className="text-[10px] text-muted-foreground tracking-wide uppercase">POS & Billing</p>
           </div>
           <button
             className="ml-auto lg:hidden p-1 text-muted-foreground hover:text-foreground"
@@ -118,6 +154,7 @@ export function Sidebar() {
           </button>
         </div>
 
+        {/* Primary nav links */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => (
             <Link
@@ -134,18 +171,53 @@ export function Sidebar() {
               {item.label}
             </Link>
           ))}
+
+          {/* Public Landing Link */}
+          <div className="pt-4 mt-4 border-t border-border">
+            <Link
+              href="/"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-zinc-200 hover:bg-surface-elevated transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              View Public Website
+            </Link>
+          </div>
         </nav>
 
-        <div className="px-4 py-4 border-t border-border">
+        {/* Authenticated User Bar & Logout */}
+        <div className="p-3 border-t border-border bg-surface-elevated/40 space-y-3">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-xs font-bold text-accent">
-              PK
+            <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-xs font-bold text-purple-300">
+              {user?.name ? user.name.slice(0, 2).toUpperCase() : "GM"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">Admin</p>
-              <p className="text-[10px] text-muted-foreground">Restaurant Manager</p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-xs font-bold text-foreground truncate">
+                  {user?.name || "Priyanshu (Manager)"}
+                </p>
+              </div>
+              <p className="text-[10px] text-purple-400 font-semibold uppercase tracking-wider">
+                {user?.role || "ADMIN"} • Active
+              </p>
             </div>
           </div>
+
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-300 text-xs font-medium transition-colors disabled:opacity-50"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            {loggingOut ? "Signing out..." : "Sign Out"}
+          </button>
         </div>
       </aside>
     </>

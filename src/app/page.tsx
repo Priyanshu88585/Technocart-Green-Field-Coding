@@ -1,415 +1,395 @@
 import Link from "next/link";
-import { getDashboardStats, getOrders } from "@/app/actions";
+import { getMenuItems, getSettings } from "@/app/actions";
 import { formatCurrency } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
-  const [stats, activeOrdersList] = await Promise.all([
-    getDashboardStats(),
-    getOrders("active"),
+export default async function LandingPage() {
+  const [items, settings] = await Promise.all([
+    getMenuItems(),
+    getSettings(),
   ]);
 
-  const averageOrderValue =
-    stats.ordersToday > 0 ? Math.round(stats.revenueToday / stats.ordersToday) : 0;
+  const featuredItems = items.slice(0, 8);
 
   return (
-    <div className="min-h-full p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
-      {/* Top Header / Welcome */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-white/[0.08]">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-purple-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            POS Live Terminal
+    <div className="min-h-screen bg-black text-white selection:bg-purple-600 selection:text-white">
+      {/* Ambient background glows */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-600/10 rounded-full blur-[160px] pointer-events-none" />
+      <div className="fixed top-1/3 right-0 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[160px] pointer-events-none" />
+
+      {/* Top Navbar */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-black/70 border-b border-white/[0.08]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400/20 to-purple-600/20 border border-amber-400/30 flex items-center justify-center text-amber-300 shadow-lg shadow-amber-500/10">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                <path d="M2 17l10 5 10-5" />
+                <path d="M2 12l10 5 10-5" />
+              </svg>
+            </div>
+            <div>
+              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white block">
+                {settings?.name || "The Grand Kitchen"}
+              </span>
+              <span className="text-[10px] uppercase tracking-widest text-amber-400/80 font-semibold">
+                Fine Dining & Gastronomy
+              </span>
+            </div>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1">
-            Restaurant Operations & Billing
+
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-300">
+            <a href="#about" className="hover:text-white transition-colors">Our Story</a>
+            <a href="#menu" className="hover:text-white transition-colors">Signature Menu</a>
+            <a href="#features" className="hover:text-white transition-colors">POS & Billing Suite</a>
+            <a href="#credentials" className="text-purple-400 hover:text-purple-300 transition-colors font-semibold">Staff Credentials</a>
+            <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+          </nav>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-xs sm:text-sm font-bold shadow-lg shadow-purple-600/30 hover:from-purple-500 hover:to-indigo-500 hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <polyline points="10 17 15 12 10 7" />
+                <line x1="15" y1="12" x2="3" y2="12" />
+              </svg>
+              <span>Staff Login</span>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative pt-16 pb-20 sm:pt-24 sm:pb-32 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+          {/* Eyebrow badge */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/10 text-xs font-semibold text-zinc-300 backdrop-blur-md shadow-inner">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+            <span>MUMBAI&apos;S PREMIER FINE DINING • EST. 2018</span>
+            <span className="text-zinc-600">•</span>
+            <span className="text-purple-400">POWERED BY MONGODB</span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white max-w-5xl mx-auto leading-[1.1]">
+            Where Culinary Royalty Meets{" "}
+            <span className="bg-gradient-to-r from-purple-400 via-amber-300 to-indigo-400 bg-clip-text text-transparent">
+              Intelligent Restaurant Billing.
+            </span>
           </h1>
-          <p className="text-sm text-zinc-400 mt-0.5">
-            Real-time table orders, kitchen pipeline, revenue overview, and billing settlement
+
+          {/* Subtitle */}
+          <p className="text-base sm:text-lg text-zinc-400 max-w-3xl mx-auto font-normal leading-relaxed">
+            Welcome to <strong className="text-zinc-200">The Grand Kitchen</strong>. Discover artisanal dum-cooked biryanis,
+            tandoori delicacies, and fine wine pairings — synchronized with a lightning-fast POS engine, real-time table management,
+            and 80mm thermal GST invoice generation.
+          </p>
+
+          {/* Call to Actions */}
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <Link
+              href="/login"
+              className="px-8 py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white font-bold text-sm sm:text-base shadow-xl shadow-purple-600/30 hover:scale-[1.03] active:scale-[0.98] transition-all flex items-center gap-2.5"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <line x1="8" y1="21" x2="16" y2="21" />
+                <line x1="12" y1="17" x2="12" y2="21" />
+              </svg>
+              <span>Access POS Billing Terminal</span>
+            </Link>
+
+            <a
+              href="#menu"
+              className="px-7 py-4 rounded-2xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 text-zinc-200 font-semibold text-sm sm:text-base transition-all flex items-center gap-2"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+              <span>Explore Signature Dishes</span>
+            </a>
+          </div>
+
+          {/* ============================================================== */}
+          {/* HERO DEMO CREDENTIALS CARD (Prominent in Hero Section) */}
+          {/* ============================================================== */}
+          <div id="credentials" className="pt-10 max-w-4xl mx-auto text-left">
+            <div className="p-6 sm:p-8 rounded-3xl bg-zinc-950/80 border-2 border-purple-500/30 backdrop-blur-2xl shadow-2xl shadow-purple-950/50 space-y-6 relative overflow-hidden group">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                      Staff Portal Verified Credentials
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        MongoDB Synced
+                      </span>
+                    </h2>
+                    <p className="text-xs text-zinc-400">
+                      Use the pre-configured accounts below to log in directly. No public signup needed.
+                    </p>
+                  </div>
+                </div>
+
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-600/30 hover:bg-purple-600/40 border border-purple-500/40 text-purple-200 text-xs font-bold transition-all"
+                >
+                  Go to Login Screen →
+                </Link>
+              </div>
+
+              {/* Two Credentials Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* 1. Admin Account */}
+                <div className="p-5 rounded-2xl bg-white/[0.03] border border-purple-500/20 hover:border-purple-500/40 transition-all space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-1 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-300 text-[11px] font-bold tracking-wide uppercase">
+                      👑 General Manager (Admin)
+                    </span>
+                    <span className="text-[11px] font-mono text-zinc-500">Full Access</span>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+                      <span className="text-zinc-400">Login ID / Email:</span>
+                      <code className="text-purple-300 font-mono font-bold select-all">
+                        admin@thegrandkitchen.com
+                      </code>
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+                      <span className="text-zinc-400">Password:</span>
+                      <code className="text-amber-300 font-mono font-bold select-all">
+                        GrandAdmin123!
+                      </code>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-zinc-500 leading-relaxed">
+                    Permissions: View revenue dashboards, manage menu dishes, customize GST/restaurant tax rates, and settle orders.
+                  </p>
+                </div>
+
+                {/* 2. Cashier Account */}
+                <div className="p-5 rounded-2xl bg-white/[0.03] border border-amber-500/20 hover:border-amber-500/40 transition-all space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-bold tracking-wide uppercase">
+                      💳 Billing Cashier (POS)
+                    </span>
+                    <span className="text-[11px] font-mono text-zinc-500">Operator</span>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+                      <span className="text-zinc-400">Login ID / Email:</span>
+                      <code className="text-amber-300 font-mono font-bold select-all">
+                        cashier@thegrandkitchen.com
+                      </code>
+                    </div>
+                    <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/5">
+                      <span className="text-zinc-400">Password:</span>
+                      <code className="text-purple-300 font-mono font-bold select-all">
+                        Cashier123!
+                      </code>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-zinc-500 leading-relaxed">
+                    Permissions: High-speed POS order terminal, table additions, Cash/UPI/Card split settlement, 80mm invoice printing.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Metrics Banner */}
+      <section className="border-y border-white/[0.08] bg-white/[0.02]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">4.9 ★</div>
+              <div className="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Guest Satisfaction</div>
+            </div>
+            <div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-amber-400 tracking-tight">24+</div>
+              <div className="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Original Dishes in MongoDB</div>
+            </div>
+            <div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-purple-400 tracking-tight">80mm</div>
+              <div className="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Thermal GST Invoicing</div>
+            </div>
+            <div>
+              <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">100%</div>
+              <div className="text-xs text-zinc-400 mt-1 uppercase tracking-wider font-medium">Integer Paise Precision</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Signature Dishes Preview */}
+      <section id="menu" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="text-center space-y-3">
+          <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+            Artisanal Culinary Catalog
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+            Signature Chef Specialties
+          </h2>
+          <p className="text-sm text-zinc-400 max-w-2xl mx-auto">
+            Live catalog fetched directly from your MongoDB Atlas database. Each recipe reflects timeless North Indian and Mughal culinary heritage.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/orders/new"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium text-sm shadow-lg shadow-purple-600/25 hover:from-purple-500 hover:to-indigo-500 transition-all hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Take New Order
-          </Link>
-          <Link
-            href="/orders"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.1] text-zinc-200 text-sm font-medium hover:bg-white/[0.08] hover:text-white transition-all"
-          >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7" rx="1" />
-              <rect x="14" y="3" width="7" height="7" rx="1" />
-              <rect x="3" y="14" width="7" height="7" rx="1" />
-              <rect x="14" y="14" width="7" height="7" rx="1" />
-            </svg>
-            All Orders
-          </Link>
-        </div>
-      </div>
-
-      {/* Primary KPI Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Revenue Today */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-purple-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Today&apos;s Revenue
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-              <span className="font-semibold text-base">₹</span>
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {formatCurrency(stats.revenueToday)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-emerald-400">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
-              </svg>
-              <span>Settled bills today</span>
-            </div>
-          </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-purple-600/10 rounded-full blur-2xl group-hover:bg-purple-600/20 transition-all" />
-        </div>
-
-        {/* Orders Today */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-indigo-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Orders Count
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                <rect x="8" y="2" width="8" height="4" rx="1" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {stats.ordersToday}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-400">
-              <span>Recorded today</span>
-            </div>
-          </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-600/10 rounded-full blur-2xl group-hover:bg-indigo-600/20 transition-all" />
-        </div>
-
-        {/* Active Dining / Kitchen */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-amber-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Active Orders
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-amber-400 tracking-tight">
-              {stats.activeOrders}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-              <span>Tables / Takeaway pending</span>
-            </div>
-          </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-600/10 rounded-full blur-2xl group-hover:bg-amber-600/20 transition-all" />
-        </div>
-
-        {/* Average Order Value */}
-        <div className="p-5 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md relative overflow-hidden group hover:border-emerald-500/30 transition-all">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
-              Avg. Ticket Size (AOV)
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="1" x2="12" y2="23" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </div>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {formatCurrency(averageOrderValue)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-zinc-400">
-              <span>Per customer ticket</span>
-            </div>
-          </div>
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-600/10 rounded-full blur-2xl group-hover:bg-emerald-600/20 transition-all" />
-        </div>
-      </div>
-
-      {/* Active Orders Live Pipeline */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              Live Active Tables & Orders
-            </h2>
-            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-              {activeOrdersList.length} In-Progress
-            </span>
-          </div>
-          <Link
-            href="/orders"
-            className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium flex items-center gap-1"
-          >
-            Manage all orders
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </Link>
-        </div>
-
-        {activeOrdersList.length === 0 ? (
-          <div className="p-8 rounded-2xl bg-zinc-900/40 border border-white/[0.06] text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mx-auto text-purple-400">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                <polyline points="22 4 12 14.01 9 11.01" />
-              </svg>
-            </div>
-            <p className="text-sm font-medium text-zinc-300">No active orders right now</p>
-            <p className="text-xs text-zinc-500 max-w-sm mx-auto">
-              All tables are settled and clear. Click &apos;Take New Order&apos; to start taking orders from customers.
-            </p>
-            <Link
-              href="/orders/new"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600/80 text-white text-xs font-medium hover:bg-purple-600 transition-colors"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {featuredItems.map((item) => (
+            <div
+              key={item.id}
+              className="p-6 rounded-3xl bg-zinc-950/70 border border-white/[0.08] hover:border-purple-500/40 backdrop-blur-md transition-all flex flex-col justify-between group space-y-4"
             >
-              Start New Order
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {activeOrdersList.map((order) => {
-              const orderTime = new Date(order.createdAt).toLocaleTimeString("en-IN", {
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-              return (
-                <div
-                  key={order.id}
-                  className="p-5 rounded-2xl bg-zinc-900/70 border border-white/[0.08] hover:border-purple-500/40 transition-all flex flex-col justify-between space-y-4 group"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-bold text-white">
-                          #{order.orderNumber}
-                        </span>
-                        <span
-                          className={`px-2 py-0.5 rounded-md text-[11px] font-semibold uppercase tracking-wider ${
-                            order.orderType === "dine-in"
-                              ? "bg-purple-500/15 text-purple-300 border border-purple-500/30"
-                              : "bg-blue-500/15 text-blue-300 border border-blue-500/30"
-                          }`}
-                        >
-                          {order.orderType}
-                        </span>
-                      </div>
-                      <span className="text-xs text-zinc-500 font-mono">{orderTime}</span>
-                    </div>
-
-                    <div className="flex items-baseline justify-between">
-                      <div className="text-lg font-bold text-zinc-100">
-                        {order.tableNumber ? `Table ${order.tableNumber}` : "Takeaway / Parcel"}
-                      </div>
-                      <div className="text-base font-bold text-purple-400 font-mono">
-                        {formatCurrency(order.totalInPaise)}
-                      </div>
-                    </div>
-
-                    {/* Order items preview */}
-                    <div className="space-y-1 pt-1 border-t border-white/[0.06]">
-                      <div className="text-xs text-zinc-400 font-medium">
-                        {order.items.length} items ordered:
-                      </div>
-                      <div className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">
-                        {order.items.map((i) => `${i.itemName} (x${i.quantity})`).join(", ")}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-2 border-t border-white/[0.06]">
-                    <Link
-                      href={`/orders/${order.id}`}
-                      className="flex-1 text-center py-2 px-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-semibold text-zinc-200 transition-colors"
-                    >
-                      View & Settle
-                    </Link>
-                    <Link
-                      href={`/billing/${order.id}`}
-                      className="py-2 px-3 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-xs font-semibold text-purple-300 transition-colors flex items-center justify-center gap-1.5"
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="6 9 6 2 18 2 18 9" />
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                        <rect x="6" y="14" width="12" height="8" />
-                      </svg>
-                      Bill
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Grid: Recent Orders & Top Selling Items */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Orders (2 cols) */}
-        <div className="lg:col-span-2 p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Recent Order History
-            </h2>
-            <Link
-              href="/orders"
-              className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium"
-            >
-              View all
-            </Link>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-white/[0.08] text-zinc-400 uppercase tracking-wider text-[11px]">
-                  <th className="pb-3 font-semibold">Order</th>
-                  <th className="pb-3 font-semibold">Type / Table</th>
-                  <th className="pb-3 font-semibold">Items</th>
-                  <th className="pb-3 font-semibold">Amount</th>
-                  <th className="pb-3 font-semibold">Status</th>
-                  <th className="pb-3 font-semibold text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/[0.05]">
-                {stats.recentOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="py-3 font-mono font-medium text-white">
-                      #{order.orderNumber}
-                    </td>
-                    <td className="py-3 text-zinc-300">
-                      <span className="capitalize">{order.orderType}</span>
-                      {order.tableNumber && (
-                        <span className="text-zinc-500 ml-1">({order.tableNumber})</span>
-                      )}
-                    </td>
-                    <td className="py-3 text-zinc-400">
-                      {order.items.length} items
-                    </td>
-                    <td className="py-3 font-mono font-semibold text-zinc-100">
-                      {formatCurrency(order.totalInPaise)}
-                    </td>
-                    <td className="py-3">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
-                          order.status === "completed"
-                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-                            : order.status === "active"
-                            ? "bg-amber-500/15 text-amber-300 border border-amber-500/30"
-                            : "bg-red-500/15 text-red-400 border border-red-500/30"
-                        }`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="py-3 text-right">
-                      <Link
-                        href={`/orders/${order.id}`}
-                        className="text-purple-400 hover:text-purple-300 font-medium hover:underline"
-                      >
-                        Details
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Top Items (1 col) */}
-        <div className="p-6 rounded-2xl bg-zinc-900/60 border border-white/[0.08] backdrop-blur-md space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white tracking-tight">
-              Top Selling Dishes
-            </h2>
-            <Link
-              href="/menu"
-              className="text-xs text-purple-400 hover:text-purple-300 transition-colors font-medium"
-            >
-              Menu
-            </Link>
-          </div>
-
-          <div className="space-y-3">
-            {stats.topItems.length === 0 ? (
-              <p className="text-xs text-zinc-500 py-4 text-center">
-                No item sales recorded yet
-              </p>
-            ) : (
-              stats.topItems.map((item, idx) => (
-                <div
-                  key={item.name}
-                  className="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 text-xs font-bold flex items-center justify-center font-mono">
-                      {idx + 1}
-                    </span>
-                    <span className="text-xs font-semibold text-zinc-200">{item.name}</span>
-                  </div>
-                  <span className="text-xs font-mono font-medium text-zinc-400 bg-white/[0.04] px-2 py-0.5 rounded-md">
-                    {item.quantity} sold
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-zinc-400">
+                    {item.category}
                   </span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" title="In Stock" />
                 </div>
-              ))
-            )}
+                <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors">
+                  {item.name}
+                </h3>
+                <p className="text-xs text-zinc-400 leading-relaxed line-clamp-2">
+                  {item.description || "Authentic freshly prepared specialty seasoned with whole aromatic spices."}
+                </p>
+              </div>
+
+              <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                <span className="text-lg font-bold font-mono text-amber-300">
+                  {formatCurrency(item.priceInPaise)}
+                </span>
+                <span className="text-[11px] text-zinc-500 font-medium">Fine Dining</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Restaurant Operations & SaaS Capabilities */}
+      <section id="features" className="py-20 bg-zinc-950/50 border-t border-white/[0.08]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+          <div className="text-center space-y-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-purple-400">
+              Enterprise Grade POS Architecture
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+              Built for High-Velocity Restaurant Operations
+            </h2>
+            <p className="text-sm text-zinc-400 max-w-2xl mx-auto">
+              Engineered with zero floating-point arithmetic errors, real-time table state machines, and Indian GST split invoicing.
+            </p>
           </div>
 
-          {/* Quick shortcuts widget */}
-          <div className="pt-4 border-t border-white/[0.08] space-y-2">
-            <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block">
-              Quick Management
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-8 rounded-3xl bg-black/60 border border-white/[0.08] space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-white">GST Split Invoicing (CGST + SGST)</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Calculates GST with exact split-tax transparency (2.5% CGST + 2.5% SGST). Clean 80mm thermal receipt format ready for physical Epson, Posiflex, and thermal printers.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-3xl bg-black/60 border border-white/[0.08] space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-white">Dynamic Active Table Appends</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Waiters can append mid-meal orders to existing active dining tables without restarting tickets. The system auto-updates subtotals, discounts, and tax liabilities instantly.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-3xl bg-black/60 border border-white/[0.08] space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+                  <line x1="1" y1="10" x2="23" y2="10" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-white">Multi-Payment & Split Settlement</h3>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                Full split payment support: settle part bill in Cash and part via UPI QR, recording UTR transaction reference IDs and verifying zero remaining balances before completion.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Restaurant Information & Hours */}
+      <section id="contact" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-zinc-950 to-zinc-900 border border-white/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          <div className="space-y-3 max-w-lg">
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+              Visit The Grand Kitchen
             </span>
-            <div className="grid grid-cols-2 gap-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              {settings?.name || "The Grand Kitchen"}
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+              {settings?.address || "123 Food Street, Culinary District, Mumbai - 400001"}
+            </p>
+            <div className="flex flex-wrap gap-4 pt-2 text-xs text-zinc-300 font-mono">
+              <span>📞 {settings?.phone || "+91 98765 43210"}</span>
+              <span>✉️ {settings?.email || "info@thegrandkitchen.com"}</span>
+              <span>🏛️ GSTIN: {settings?.gstNumber || "27AABCU9603R1ZM"}</span>
+            </div>
+          </div>
+
+          <div className="space-y-3 text-left md:text-right shrink-0">
+            <div className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+              Dining & Kitchen Hours
+            </div>
+            <div className="text-sm font-bold text-white">
+              Monday – Sunday: 11:30 AM – 11:30 PM
+            </div>
+            <div className="pt-2">
               <Link
-                href="/menu"
-                className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] text-xs font-medium text-zinc-300 text-center block transition-colors"
+                href="/login"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs sm:text-sm transition-all"
               >
-                🍽️ Manage Menu
-              </Link>
-              <Link
-                href="/settings"
-                className="p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] text-xs font-medium text-zinc-300 text-center block transition-colors"
-              >
-                ⚙️ Tax & Store Info
+                Sign In to Staff Terminal
               </Link>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/[0.08] py-8 text-center text-xs text-zinc-500">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p>© {new Date().getFullYear()} {settings?.name || "The Grand Kitchen"}. Powered by Next.js & MongoDB Atlas.</p>
+          <div className="flex items-center gap-4 text-zinc-400">
+            <Link href="/login" className="hover:text-white transition-colors">Staff Login</Link>
+            <Link href="/dashboard" className="hover:text-white transition-colors">POS Dashboard</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
