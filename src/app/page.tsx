@@ -5,7 +5,13 @@ import { getSettings } from "@/app/actions";
 export const dynamic = "force-dynamic";
 
 export default async function LandingPage() {
-  const settings = await getSettings();
+  let settings;
+  try {
+    settings = await getSettings();
+  } catch (e) {
+    console.error("Failed to load settings:", e);
+    settings = { name: "The Grand Kitchen" };
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-white selection:text-black">

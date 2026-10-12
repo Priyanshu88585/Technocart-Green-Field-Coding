@@ -7,9 +7,14 @@ import { verifyPassword, setAuthCookie, clearAuthCookie, getCurrentUser } from "
 import { revalidatePath } from "next/cache";
 
 export async function getMenuItems() {
-  return prisma.menuItem.findMany({
-    orderBy: [{ category: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
-  });
+  try {
+    return await prisma.menuItem.findMany({
+      orderBy: [{ category: "asc" }, { sortOrder: "asc" }, { name: "asc" }],
+    });
+  } catch (err) {
+    console.error("Failed to fetch menu items from database:", err);
+    return [];
+  }
 }
 
 export async function getMenuItemsByCategory() {
@@ -133,26 +138,36 @@ export async function createOrder(data: unknown) {
 }
 
 export async function getOrders(status?: string) {
-  const where = status && status !== "all" ? { status } : {};
-  return prisma.order.findMany({
-    where,
-    include: {
-      items: true,
-      payments: true,
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+  try {
+    const where = status && status !== "all" ? { status } : {};
+    return await prisma.order.findMany({
+      where,
+      include: {
+        items: true,
+        payments: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+    });
+  } catch (err) {
+    console.error("Failed to fetch orders from database:", err);
+    return [];
+  }
 }
 
 export async function getOrder(id: string) {
-  return prisma.order.findUnique({
-    where: { id },
-    include: {
-      items: { include: { menuItem: true } },
-      payments: true,
-    },
-  });
+  try {
+    return await prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: { include: { menuItem: true } },
+        payments: true,
+      },
+    });
+  } catch (err) {
+    console.error("Failed to fetch order from database:", err);
+    return null;
+  }
 }
 
 export async function updateOrderStatus(id: string, status: string) {
@@ -271,13 +286,31 @@ export async function recordPayment(data: unknown) {
 }
 
 export async function getSettings() {
-  let settings = await prisma.restaurantSettings.findFirst();
-  if (!settings) {
-    settings = await prisma.restaurantSettings.create({
-      data: {},
-    });
+  try {
+    let settings = await prisma.restaurantSettings.findFirst();
+    if (!settings) {
+      settings = await prisma.restaurantSettings.create({
+        data: {},
+      });
+    }
+    return settings;
+  } catch (err) {
+    console.error("Failed to fetch settings from database, using defaults:", err);
+    return {
+      id: "default-settings",
+      name: "The Grand Kitchen",
+      address: "Plot 42, Bandra Kurla Complex, Mumbai",
+      phone: "+91 98765 43210",
+      email: "info@thegrandkitchen.com",
+      gstNumber: "27AAACG0123M1Z5",
+      currency: "INR",
+      currencySymbol: "₹",
+      defaultTax: 5,
+      defaultService: 0,
+      receiptFooter: "Thank you for dining with us! Visit us again soon.",
+      updatedAt: new Date(),
+    };
   }
-  return settings;
 }
 
 export async function updateSettings(data: unknown) {
@@ -303,48 +336,59 @@ export async function updateSettings(data: unknown) {
 }
 
 export async function getDashboardStats() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  const [ordersToday, totalRevenue, activeOrders, recentOrders, topItems] = await Promise.all([
-    prisma.order.count({
-      where: {
-        createdAt: { gte: today },
-        status: { not: "cancelled" },
-      },
-    }),
-    prisma.order.aggregate({
-      where: {
-        status: "completed",
-        createdAt: { gte: today },
-      },
-      _sum: { totalInPaise: true },
-    }),
-    prisma.order.count({ where: { status: "active" } }),
-    prisma.order.findMany({
-      where: { status: { not: "cancelled" } },
-      include: { items: true },
-      orderBy: { createdAt: "desc" },
-      take: 5,
-    }),
-    prisma.orderItem.groupBy({
-      by: ["itemName"],
-      _sum: { quantity: true },
-      orderBy: { _sum: { quantity: "desc" } },
-      take: 5,
-    }),
-  ]);
+    const [ordersToday, totalRevenue, activeOrders, recentOrders, topItems] = await Promise.all([
+      prisma.order.count({
+        where: {
+          createdAt: { gte: today },
+          status: { not: "cancelled" },
+        },
+      }),
+      prisma.order.aggregate({
+        where: {
+          status: "completed",
+          createdAt: { gte: today },
+        },
+        _sum: { totalInPaise: true },
+      }),
+      prisma.order.count({ where: { status: "active" } }),
+      prisma.order.findMany({
+        where: { status: { not: "cancelled" } },
+        include: { items: true },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+      }),
+      prisma.orderItem.groupBy({
+        by: ["itemName"],
+        _sum: { quantity: true },
+        orderBy: { _sum: { quantity: "desc" } },
+        take: 5,
+      }),
+    ]);
 
-  return {
-    ordersToday,
-    revenueToday: totalRevenue._sum.totalInPaise || 0,
-    activeOrders,
-    recentOrders,
-    topItems: topItems.map((i) => ({
-      name: i.itemName,
-      quantity: i._sum.quantity || 0,
-    })),
-  };
+    return {
+      ordersToday,
+      revenueToday: totalRevenue._sum.totalInPaise || 0,
+      activeOrders,
+      recentOrders,
+      topItems: topItems.map((i) => ({
+        name: i.itemName,
+        quantity: i._sum.quantity || 0,
+      })),
+    };
+  } catch (err) {
+    console.error("Failed to fetch dashboard stats from database:", err);
+    return {
+      ordersToday: 0,
+      revenueToday: 0,
+      activeOrders: 0,
+      recentOrders: [],
+      topItems: [],
+    };
+  }
 }
 
 export async function loginUser(data: unknown) {
