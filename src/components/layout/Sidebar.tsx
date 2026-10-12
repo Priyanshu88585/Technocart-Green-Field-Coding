@@ -91,7 +91,11 @@ export function Sidebar() {
   }, []);
 
   const isActive = (href: string) => {
-    return pathname === href || pathname.startsWith(`${href}/`);
+    if (pathname === href) return true;
+    if (href === "/orders") {
+      return pathname.startsWith("/orders/") && !pathname.startsWith("/orders/new");
+    }
+    return pathname.startsWith(`${href}/`);
   };
 
   const handleLogout = async () => {
