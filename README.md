@@ -1,8 +1,11 @@
 # The Grand Kitchen — Restaurant Management & Billing System
 
-A high-performance, full-stack Restaurant Management and Billing System built with **Next.js 16 (App Router)**, **React 19**, **Prisma ORM**, **MongoDB**, **Tailwind CSS 4**, and **TypeScript**.
+A high-performance, full-stack Restaurant Management and Billing System built with **Next.js 16 (App Router)**, **React 19**, **Prisma ORM**, **MongoDB Atlas**, **Tailwind CSS 4**, and **TypeScript**.
 
 Developed for the **Technical Assessment: Restaurant Billing & Management System (One-Day Development Assignment)**.
+
+- **🌐 Live Production URL**: [https://technocart-green-field-coding.vercel.app/](https://technocart-green-field-coding.vercel.app/)
+- **📦 GitHub Repository**: [https://github.com/Priyanshu88585/Technocart-Green-Field-Coding](https://github.com/Priyanshu88585/Technocart-Green-Field-Coding)
 
 ---
 
@@ -147,6 +150,7 @@ npm run start
 
 ## 🗄️ Database Schema Overview
 
+- **`User`**: `id`, `name`, `email`, `password` (bcrypt hash), `role` (`ADMIN` / `CASHIER` / `MANAGER`), `phone`, `createdAt`, `updatedAt`.
 - **`MenuItem`**: `id`, `name`, `description`, `category`, `priceInPaise`, `available`, `sortOrder`, timestamps.
 - **`Order`**: `id`, `orderNumber` (unique auto-incrementing ticket), `orderType` (dine-in / takeaway), `tableNumber`, `status` (active / completed / cancelled), `note`, `subtotalInPaise`, `discountPercent`, `taxPercent`, `servicePercent`, `totalInPaise`, `createdAt`, `completedAt`.
 - **`OrderItem`**: `id`, `orderId`, `menuItemId`, `itemName`, `unitPriceInPaise`, `quantity`, `lineTotalInPaise`.
@@ -155,10 +159,20 @@ npm run start
 
 ---
 
+## ⚠️ Known Issues & Technical Considerations
+
+As requested in the technical assessment guidelines:
+1. **Thermal Receipt Direct Hardware Sockets**: Thermal receipt printing is implemented via standard browser print emulation with custom `@media print` CSS calibrated for standard 80mm paper rolls. Direct raw ESC/POS byte-level socket communication to serial/USB printers typically requires a local native desktop daemon (e.g., QZ Tray or Electron wrapper).
+2. **Multi-Terminal Push Synchronization**: Page state updates currently leverage Next.js Server Actions with automatic route cache revalidation (`revalidatePath`). For simultaneous multi-station kitchen displays, WebSockets or Server-Sent Events (SSE) would provide sub-second push notifications without manual navigation.
+3. **MongoDB Atlas Cold Starts on Cloud Serverless**: Free-tier MongoDB Atlas clusters occasionally exhibit a brief latency spike during cold TLS handshakes from Vercel's edge regions. Resilient try/catch fallbacks ensure pages always render safely without crashing.
+
+---
+
 ## 🔮 Future Roadmap / Next Improvements
 
 If additional development time were available, the following features would be implemented:
 1. **Kitchen Display System (KDS)**: Dedicated full-screen kitchen monitor with order item status (`Pending` → `Preparing` → `Ready to Serve`) and audio chimes for new tickets.
-2. **Table Layout / Floor Plan View**: Interactive graphical restaurant floor plan with draggable tables and visual color-coding (Green = Free, Amber = Occupied, Red = Bill Requested).
+2. **Interactive Floor Plan Matrix**: Graphical restaurant floor plan with draggable tables and visual color-coding (Green = Free, Amber = Occupied, Red = Bill Requested).
 3. **Staff Shift & Cash Drawer Reconciliation**: End-of-day register closure reports comparing expected cash drawer balances with recorded cash transactions.
 4. **Offline PWA Support**: Service worker caching and IndexedDB sync for network-resilient ordering during internet outages.
+
