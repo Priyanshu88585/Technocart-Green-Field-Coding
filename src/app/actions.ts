@@ -2,9 +2,31 @@
 
 import { prisma } from "@/lib/prisma";
 import { calculateBill, calculateLineTotal } from "@/lib/money";
-import { createOrderSchema, menuItemSchema, paymentSchema, settingsSchema, loginSchema } from "@/lib/validations";
-import { verifyPassword, setAuthCookie, clearAuthCookie, getCurrentUser } from "@/lib/auth";
+import {
+  createOrderSchema,
+  menuItemSchema,
+  paymentSchema,
+  settingsSchema,
+  loginSchema,
+  objectIdSchema,
+} from "@/lib/validations";
+import {
+  verifyPassword,
+  setAuthCookie,
+  clearAuthCookie,
+  getCurrentUser,
+  requireAuth,
+  requireRole,
+} from "@/lib/auth";
+import { checkRateLimit, resetRateLimit } from "@/lib/rateLimit";
 import { revalidatePath } from "next/cache";
+
+// Safe generic error message for user-facing responses
+const GENERIC_ERROR_MSG = "Unable to process your request at this time. Please try again.";
+
+// ----------------------------------------------------
+// MENU MANAGEMENT (Protected: ADMIN & MANAGER)
+// ----------------------------------------------------
 
 export async function getMenuItems() {
   try {
@@ -28,46 +50,99 @@ export async function getMenuItemsByCategory() {
 }
 
 export async function createMenuItem(data: unknown) {
-  const parsed = menuItemSchema.safeParse(data);
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid input" };
+  try {
+    // RBAC: Only ADMIN and MANAGER can create menu items
+    await requireRole(["ADMIN", "MANAGER"]);
+
+    const parsed = menuItemSchema.safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || "Invalid menu item data" };
+    }
+
+    const existing = await prisma.menuItem.findFirst({
+      where: { name: { equals: parsed.data.name, mode: "insensitive" } },
+    });
+    if (existing) {
+      return { error: "A menu item with this name already exists" };
+    }
+
+    const item = await prisma.menuItem.create({ data: parsed.data });
+    revalidatePath("/menu");
+    revalidatePath("/orders/new");
+    return { data: item };
+  } catch (err: unknown) {
+    console.error("createMenuItem error:", err);
+    if (err instanceof Error && (err.message === "UNAUTHORIZED" || err.message === "FORBIDDEN")) {
+      return { error: "Access denied: insufficient administrative permissions" };
+    }
+    return { error: GENERIC_ERROR_MSG };
   }
-  const existing = await prisma.menuItem.findFirst({
-    where: { name: parsed.data.name },
-  });
-  if (existing) {
-    return { error: "A menu item with this name already exists" };
-  }
-  const item = await prisma.menuItem.create({ data: parsed.data });
-  revalidatePath("/menu");
-  return { data: item };
 }
 
 export async function updateMenuItem(id: string, data: unknown) {
-  const parsed = menuItemSchema.partial().safeParse(data);
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid input" };
+  try {
+    // RBAC: Only ADMIN and MANAGER can update menu items
+    await requireRole(["ADMIN", "MANAGER"]);
+
+    const idParsed = objectIdSchema.safeParse(id);
+    if (!idParsed.success) {
+      return { error: "Invalid menu item identifier" };
+    }
+
+    const parsed = menuItemSchema.partial().safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || "Invalid input" };
+    }
+
+    const item = await prisma.menuItem.update({
+      where: { id: idParsed.data },
+      data: parsed.data,
+    });
+
+    revalidatePath("/menu");
+    revalidatePath("/orders/new");
+    return { data: item };
+  } catch (err: unknown) {
+    console.error("updateMenuItem error:", err);
+    if (err instanceof Error && (err.message === "UNAUTHORIZED" || err.message === "FORBIDDEN")) {
+      return { error: "Access denied: insufficient permissions" };
+    }
+    return { error: GENERIC_ERROR_MSG };
   }
-  const item = await prisma.menuItem.update({
-    where: { id },
-    data: parsed.data,
-  });
-  revalidatePath("/menu");
-  revalidatePath("/orders/new");
-  return { data: item };
 }
 
 export async function deleteMenuItem(id: string) {
-  const hasOrders = await prisma.orderItem.findFirst({
-    where: { menuItemId: id },
-  });
-  if (hasOrders) {
-    return { error: "Cannot delete: this item has been used in orders" };
+  try {
+    // RBAC: Only ADMIN and MANAGER can delete menu items
+    await requireRole(["ADMIN", "MANAGER"]);
+
+    const idParsed = objectIdSchema.safeParse(id);
+    if (!idParsed.success) {
+      return { error: "Invalid menu item identifier" };
+    }
+
+    const hasOrders = await prisma.orderItem.findFirst({
+      where: { menuItemId: idParsed.data },
+    });
+    if (hasOrders) {
+      return { error: "Cannot delete: this item is linked to existing order receipts" };
+    }
+
+    await prisma.menuItem.delete({ where: { id: idParsed.data } });
+    revalidatePath("/menu");
+    return { success: true };
+  } catch (err: unknown) {
+    console.error("deleteMenuItem error:", err);
+    if (err instanceof Error && (err.message === "UNAUTHORIZED" || err.message === "FORBIDDEN")) {
+      return { error: "Access denied: insufficient permissions" };
+    }
+    return { error: GENERIC_ERROR_MSG };
   }
-  await prisma.menuItem.delete({ where: { id } });
-  revalidatePath("/menu");
-  return { success: true };
 }
+
+// ----------------------------------------------------
+// ORDERS & BILLING (Protected: Authenticated Staff)
+// ----------------------------------------------------
 
 export async function getNextOrderNumber(): Promise<number> {
   const lastOrder = await prisma.order.findFirst({
@@ -78,67 +153,83 @@ export async function getNextOrderNumber(): Promise<number> {
 }
 
 export async function createOrder(data: unknown) {
-  const parsed = createOrderSchema.safeParse(data);
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid order data" };
-  }
+  try {
+    // Require authenticated staff
+    await requireAuth();
 
-  const { items, discountPercent, taxPercent, servicePercent, ...orderData } = parsed.data;
+    const parsed = createOrderSchema.safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || "Invalid order data" };
+    }
 
-  const menuItemIds = items.map((i) => i.menuItemId).filter(Boolean);
-  const menuItems = await prisma.menuItem.findMany({
-    where: { id: { in: menuItemIds } },
-  });
+    const { items, discountPercent, taxPercent, servicePercent, ...orderData } = parsed.data;
 
-  const menuItemMap = new Map(menuItems.map((m) => [m.id, m]));
+    // Verify item prices directly from database to prevent client tampering
+    const menuItemIds = items.map((i) => i.menuItemId).filter(Boolean);
+    const menuItems = await prisma.menuItem.findMany({
+      where: { id: { in: menuItemIds } },
+    });
 
-  const validatedItems = items.map((item) => {
-    const menuItem = menuItemMap.get(item.menuItemId);
-    const unitPrice = menuItem ? menuItem.priceInPaise : item.unitPriceInPaise;
-    const name = menuItem ? menuItem.name : item.itemName;
-    return {
-      menuItemId: item.menuItemId,
-      itemName: name,
-      unitPriceInPaise: unitPrice,
-      quantity: item.quantity,
-      lineTotalInPaise: calculateLineTotal(unitPrice, item.quantity),
-    };
-  });
+    const menuItemMap = new Map(menuItems.map((m) => [m.id, m]));
 
-  const billItems = validatedItems.map((i) => ({
-    unitPriceInPaise: i.unitPriceInPaise,
-    quantity: i.quantity,
-  }));
+    const validatedItems = items.map((item) => {
+      const menuItem = menuItemMap.get(item.menuItemId);
+      // Enforce DB price when available, otherwise require verified unit price >= 0
+      const unitPrice = menuItem ? menuItem.priceInPaise : Math.max(0, item.unitPriceInPaise);
+      const name = menuItem ? menuItem.name : item.itemName;
+      return {
+        menuItemId: item.menuItemId || null,
+        itemName: name,
+        unitPriceInPaise: unitPrice,
+        quantity: item.quantity,
+        lineTotalInPaise: calculateLineTotal(unitPrice, item.quantity),
+      };
+    });
 
-  const bill = calculateBill(billItems, discountPercent, taxPercent, servicePercent);
-  const orderNumber = await getNextOrderNumber();
+    const billItems = validatedItems.map((i) => ({
+      unitPriceInPaise: i.unitPriceInPaise,
+      quantity: i.quantity,
+    }));
 
-  const order = await prisma.order.create({
-    data: {
-      ...orderData,
-      orderNumber,
-      discountPercent,
-      taxPercent,
-      servicePercent,
-      subtotalInPaise: bill.subtotalInPaise,
-      discountInPaise: bill.discountInPaise,
-      taxInPaise: bill.taxInPaise,
-      serviceInPaise: bill.serviceInPaise,
-      totalInPaise: bill.totalInPaise,
-      items: {
-        create: validatedItems,
+    const bill = calculateBill(billItems, discountPercent, taxPercent, servicePercent);
+    const orderNumber = await getNextOrderNumber();
+
+    const order = await prisma.order.create({
+      data: {
+        ...orderData,
+        orderNumber,
+        discountPercent,
+        taxPercent,
+        servicePercent,
+        subtotalInPaise: bill.subtotalInPaise,
+        discountInPaise: bill.discountInPaise,
+        taxInPaise: bill.taxInPaise,
+        serviceInPaise: bill.serviceInPaise,
+        totalInPaise: bill.totalInPaise,
+        items: {
+          create: validatedItems,
+        },
       },
-    },
-    include: { items: true },
-  });
+      include: { items: true },
+    });
 
-  revalidatePath("/orders");
-  revalidatePath("/");
-  return { data: order };
+    revalidatePath("/orders");
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+    return { data: order };
+  } catch (err: unknown) {
+    console.error("createOrder error:", err);
+    if (err instanceof Error && err.message === "UNAUTHORIZED") {
+      return { error: "Authentication required to create orders" };
+    }
+    return { error: GENERIC_ERROR_MSG };
+  }
 }
 
 export async function getOrders(status?: string) {
   try {
+    await requireAuth();
+
     const where = status && status !== "all" ? { status } : {};
     return await prisma.order.findMany({
       where,
@@ -157,8 +248,13 @@ export async function getOrders(status?: string) {
 
 export async function getOrder(id: string) {
   try {
+    await requireAuth();
+
+    const idParsed = objectIdSchema.safeParse(id);
+    if (!idParsed.success) return null;
+
     return await prisma.order.findUnique({
-      where: { id },
+      where: { id: idParsed.data },
       include: {
         items: { include: { menuItem: true } },
         payments: true,
@@ -171,119 +267,181 @@ export async function getOrder(id: string) {
 }
 
 export async function updateOrderStatus(id: string, status: string) {
-  const validStatuses = ["active", "completed", "cancelled"];
-  if (!validStatuses.includes(status)) {
-    return { error: "Invalid status" };
+  try {
+    await requireAuth();
+
+    const idParsed = objectIdSchema.safeParse(id);
+    if (!idParsed.success) {
+      return { error: "Invalid order identifier" };
+    }
+
+    const validStatuses = ["active", "completed", "cancelled"];
+    if (!validStatuses.includes(status)) {
+      return { error: "Invalid order status transition" };
+    }
+
+    const order = await prisma.order.findUnique({ where: { id: idParsed.data } });
+    if (!order) return { error: "Order not found" };
+
+    if (order.status === "cancelled") {
+      return { error: "Cannot modify a cancelled order" };
+    }
+
+    const completedAt = status === "completed" ? new Date() : null;
+
+    await prisma.order.update({
+      where: { id: idParsed.data },
+      data: { status, completedAt },
+    });
+
+    revalidatePath("/orders");
+    revalidatePath(`/orders/${id}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+    return { success: true };
+  } catch (err: unknown) {
+    console.error("updateOrderStatus error:", err);
+    if (err instanceof Error && err.message === "UNAUTHORIZED") {
+      return { error: "Authentication required" };
+    }
+    return { error: GENERIC_ERROR_MSG };
   }
-
-  const order = await prisma.order.findUnique({ where: { id } });
-  if (!order) return { error: "Order not found" };
-
-  if (order.status === "cancelled") {
-    return { error: "Cannot modify a cancelled order" };
-  }
-
-  const completedAt = status === "completed" ? new Date() : null;
-
-  await prisma.order.update({
-    where: { id },
-    data: { status, completedAt },
-  });
-
-  revalidatePath("/orders");
-  revalidatePath(`/orders/${id}`);
-  revalidatePath("/");
-  return { success: true };
 }
 
 export async function addItemToOrder(
   orderId: string,
   item: { menuItemId?: string; itemName: string; unitPriceInPaise: number; quantity: number }
 ) {
-  const order = await prisma.order.findUnique({
-    where: { id: orderId },
-    include: { items: true },
-  });
-  if (!order) return { error: "Order not found" };
-  if (order.status !== "active") return { error: "Cannot add items to an inactive order" };
+  try {
+    await requireAuth();
 
-  await prisma.orderItem.create({
-    data: {
-      orderId,
-      menuItemId: item.menuItemId || null,
-      itemName: item.itemName,
-      unitPriceInPaise: item.unitPriceInPaise,
-      quantity: item.quantity,
-      lineTotalInPaise: calculateLineTotal(item.unitPriceInPaise, item.quantity),
-    },
-  });
+    const idParsed = objectIdSchema.safeParse(orderId);
+    if (!idParsed.success) {
+      return { error: "Invalid order identifier" };
+    }
 
-  const allItems = await prisma.orderItem.findMany({ where: { orderId } });
-  const billItems = allItems.map((i) => ({
-    unitPriceInPaise: i.unitPriceInPaise,
-    quantity: i.quantity,
-  }));
-  const bill = calculateBill(
-    billItems,
-    order.discountPercent,
-    order.taxPercent,
-    order.servicePercent
-  );
+    if (!item.itemName || item.quantity < 1 || item.quantity > 100) {
+      return { error: "Invalid item quantity or name" };
+    }
 
-  const updated = await prisma.order.update({
-    where: { id: orderId },
-    data: {
-      subtotalInPaise: bill.subtotalInPaise,
-      discountInPaise: bill.discountInPaise,
-      taxInPaise: bill.taxInPaise,
-      serviceInPaise: bill.serviceInPaise,
-      totalInPaise: bill.totalInPaise,
-    },
-    include: { items: true, payments: true },
-  });
+    const order = await prisma.order.findUnique({
+      where: { id: idParsed.data },
+      include: { items: true },
+    });
+    if (!order) return { error: "Order not found" };
+    if (order.status !== "active") return { error: "Cannot add items to an inactive order" };
 
-  revalidatePath(`/orders/${orderId}`);
-  revalidatePath(`/billing/${orderId}`);
-  revalidatePath("/orders");
-  revalidatePath("/");
-  return { data: updated };
+    // If menuItemId provided, verify true price from DB
+    let unitPrice = Math.max(0, item.unitPriceInPaise);
+    if (item.menuItemId) {
+      const dbMenuItem = await prisma.menuItem.findUnique({
+        where: { id: item.menuItemId },
+      });
+      if (dbMenuItem) {
+        unitPrice = dbMenuItem.priceInPaise;
+      }
+    }
+
+    await prisma.orderItem.create({
+      data: {
+        orderId: idParsed.data,
+        menuItemId: item.menuItemId || null,
+        itemName: item.itemName.trim(),
+        unitPriceInPaise: unitPrice,
+        quantity: item.quantity,
+        lineTotalInPaise: calculateLineTotal(unitPrice, item.quantity),
+      },
+    });
+
+    const allItems = await prisma.orderItem.findMany({ where: { orderId: idParsed.data } });
+    const billItems = allItems.map((i) => ({
+      unitPriceInPaise: i.unitPriceInPaise,
+      quantity: i.quantity,
+    }));
+    const bill = calculateBill(
+      billItems,
+      order.discountPercent,
+      order.taxPercent,
+      order.servicePercent
+    );
+
+    const updated = await prisma.order.update({
+      where: { id: idParsed.data },
+      data: {
+        subtotalInPaise: bill.subtotalInPaise,
+        discountInPaise: bill.discountInPaise,
+        taxInPaise: bill.taxInPaise,
+        serviceInPaise: bill.serviceInPaise,
+        totalInPaise: bill.totalInPaise,
+      },
+      include: { items: true, payments: true },
+    });
+
+    revalidatePath(`/orders/${orderId}`);
+    revalidatePath(`/billing/${orderId}`);
+    revalidatePath("/orders");
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+    return { data: updated };
+  } catch (err: unknown) {
+    console.error("addItemToOrder error:", err);
+    if (err instanceof Error && err.message === "UNAUTHORIZED") {
+      return { error: "Authentication required" };
+    }
+    return { error: GENERIC_ERROR_MSG };
+  }
 }
 
 export async function recordPayment(data: unknown) {
-  const parsed = paymentSchema.safeParse(data);
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid payment data" };
-  }
+  try {
+    await requireAuth();
 
-  const order = await prisma.order.findUnique({
-    where: { id: parsed.data.orderId },
-    include: { payments: true },
-  });
+    const parsed = paymentSchema.safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || "Invalid payment data" };
+    }
 
-  if (!order) return { error: "Order not found" };
-  if (order.status === "cancelled") return { error: "Cannot pay for a cancelled order" };
-
-  const totalPaid = order.payments.reduce((sum, p) => sum + p.amountInPaise, 0);
-  if (totalPaid + parsed.data.amountInPaise > order.totalInPaise) {
-    return { error: "Payment exceeds order total" };
-  }
-
-  const payment = await prisma.payment.create({ data: parsed.data });
-
-  const newTotalPaid = totalPaid + parsed.data.amountInPaise;
-  if (newTotalPaid >= order.totalInPaise && order.status === "active") {
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { status: "completed", completedAt: new Date() },
+    const order = await prisma.order.findUnique({
+      where: { id: parsed.data.orderId },
+      include: { payments: true },
     });
-  }
 
-  revalidatePath("/orders");
-  revalidatePath(`/orders/${order.id}`);
-  revalidatePath(`/billing/${order.id}`);
-  revalidatePath("/");
-  return { data: payment };
+    if (!order) return { error: "Order not found" };
+    if (order.status === "cancelled") return { error: "Cannot process payment for a cancelled order" };
+
+    const totalPaid = order.payments.reduce((sum, p) => sum + p.amountInPaise, 0);
+    if (totalPaid + parsed.data.amountInPaise > order.totalInPaise) {
+      return { error: "Payment amount exceeds remaining order balance" };
+    }
+
+    const payment = await prisma.payment.create({ data: parsed.data });
+
+    const newTotalPaid = totalPaid + parsed.data.amountInPaise;
+    if (newTotalPaid >= order.totalInPaise && order.status === "active") {
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { status: "completed", completedAt: new Date() },
+      });
+    }
+
+    revalidatePath("/orders");
+    revalidatePath(`/orders/${order.id}`);
+    revalidatePath(`/billing/${order.id}`);
+    revalidatePath("/dashboard");
+    revalidatePath("/");
+    return { data: payment };
+  } catch (err: unknown) {
+    console.error("recordPayment error:", err);
+    if (err instanceof Error && err.message === "UNAUTHORIZED") {
+      return { error: "Authentication required" };
+    }
+    return { error: GENERIC_ERROR_MSG };
+  }
 }
+
+// ----------------------------------------------------
+// RESTAURANT SETTINGS (Protected: ADMIN Only)
+// ----------------------------------------------------
 
 export async function getSettings() {
   try {
@@ -314,29 +472,48 @@ export async function getSettings() {
 }
 
 export async function updateSettings(data: unknown) {
-  const parsed = settingsSchema.safeParse(data);
-  if (!parsed.success) {
-    return { error: parsed.error.issues[0]?.message || "Invalid settings" };
+  try {
+    // RBAC: Only ADMIN can modify restaurant settings and tax parameters
+    await requireRole(["ADMIN"]);
+
+    const parsed = settingsSchema.safeParse(data);
+    if (!parsed.success) {
+      return { error: parsed.error.issues[0]?.message || "Invalid settings data" };
+    }
+
+    const current = await prisma.restaurantSettings.findFirst();
+    let settings;
+    if (current) {
+      settings = await prisma.restaurantSettings.update({
+        where: { id: current.id },
+        data: parsed.data,
+      });
+    } else {
+      settings = await prisma.restaurantSettings.create({
+        data: parsed.data,
+      });
+    }
+
+    revalidatePath("/settings");
+    revalidatePath("/billing");
+    return { data: settings };
+  } catch (err: unknown) {
+    console.error("updateSettings error:", err);
+    if (err instanceof Error && (err.message === "UNAUTHORIZED" || err.message === "FORBIDDEN")) {
+      return { error: "Access denied: only Administrators can update restaurant configurations" };
+    }
+    return { error: GENERIC_ERROR_MSG };
   }
-  const current = await prisma.restaurantSettings.findFirst();
-  let settings;
-  if (current) {
-    settings = await prisma.restaurantSettings.update({
-      where: { id: current.id },
-      data: parsed.data,
-    });
-  } else {
-    settings = await prisma.restaurantSettings.create({
-      data: parsed.data,
-    });
-  }
-  revalidatePath("/settings");
-  revalidatePath("/billing");
-  return { data: settings };
 }
+
+// ----------------------------------------------------
+// DASHBOARD & ANALYTICS (Protected: Staff)
+// ----------------------------------------------------
 
 export async function getDashboardStats() {
   try {
+    await requireAuth();
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -391,6 +568,10 @@ export async function getDashboardStats() {
   }
 }
 
+// ----------------------------------------------------
+// AUTHENTICATION & SESSIONS
+// ----------------------------------------------------
+
 export async function loginUser(data: unknown) {
   try {
     const parsed = loginSchema.safeParse(data);
@@ -399,18 +580,34 @@ export async function loginUser(data: unknown) {
     }
 
     const { email, password } = parsed.data;
+
+    // Brute-force & credential stuffing defense: rate limit by normalized email
+    const rateCheck = checkRateLimit(`login:${email}`, 5, 15 * 60 * 1000);
+    if (!rateCheck.success) {
+      return {
+        error: `Too many failed login attempts. Account temporarily locked for ${Math.ceil(
+          rateCheck.resetSeconds / 60
+        )} minutes for security.`,
+      };
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
     });
 
+    // Timing-attack mitigation & user enumeration prevention:
+    // Generic error message for both user-not-found and invalid password
     if (!user) {
-      return { error: "No account found with this email address" };
+      return { error: "Invalid email or password credentials" };
     }
 
     const isPasswordValid = await verifyPassword(password, user.password);
     if (!isPasswordValid) {
-      return { error: "Incorrect password. Please verify credentials." };
+      return { error: "Invalid email or password credentials" };
     }
+
+    // Login successful: reset rate limiter for this account
+    resetRateLimit(`login:${email}`);
 
     await setAuthCookie({
       userId: user.id,
@@ -428,9 +625,9 @@ export async function loginUser(data: unknown) {
       },
     };
   } catch (err: unknown) {
-    console.error("loginUser error:", err);
-    const message = err instanceof Error ? err.message : "Authentication error occurred";
-    return { error: message };
+    console.error("loginUser internal error:", err);
+    // Never expose stack trace or database exceptions to the client
+    return { error: "Authentication service temporarily unavailable. Please try again." };
   }
 }
 
@@ -444,4 +641,3 @@ export async function logoutUser() {
 export async function getAuthUser() {
   return getCurrentUser();
 }
-

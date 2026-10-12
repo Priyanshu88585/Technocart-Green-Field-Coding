@@ -2,7 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const SESSION_COOKIE_NAME = "grand_kitchen_session";
-const SESSION_SECRET = process.env.SESSION_SECRET || "the-grand-kitchen-secret-key-2025-secure-hash-jwt";
+const SESSION_SECRET =
+  process.env.SESSION_SECRET ||
+  "the-grand-kitchen-secret-key-2025-secure-hash-jwt-fallback-production-secure";
+
+interface TokenPayload {
+  userId: string;
+  email: string;
+  name: string;
+  role: "ADMIN" | "MANAGER" | "CASHIER";
+  exp: number;
+}
 
 function base64UrlDecode(str: string): string {
   let base64 = str.replace(/-/g, "+").replace(/_/g, "/");
@@ -12,10 +22,13 @@ function base64UrlDecode(str: string): string {
   return atob(base64);
 }
 
-async function verifyEdgeToken(token: string): Promise<boolean> {
+async function verifyEdgeToken(token: string): Promise<TokenPayload | null> {
   try {
-    const [encodedPayload, signature] = token.split(".");
-    if (!encodedPayload || !signature) return false;
+    if (!token || typeof token !== "string") return null;
+    const parts = token.split(".");
+    if (parts.length !== 2) return null;
+    const [encodedPayload, signature] = parts;
+    if (!encodedPayload || !signature) return null;
 
     const enc = new TextEncoder();
     const key = await crypto.subtle.importKey(
@@ -33,22 +46,24 @@ async function verifyEdgeToken(token: string): Promise<boolean> {
     }
 
     const isValid = await crypto.subtle.verify("HMAC", key, sigBytes, enc.encode(encodedPayload));
-    if (!isValid) return false;
+    if (!isValid) return null;
 
     const payloadJson = base64UrlDecode(encodedPayload);
-    const payload = JSON.parse(payloadJson) as { exp?: number };
+    const payload = JSON.parse(payloadJson) as TokenPayload;
 
     if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
-      return false;
+      return null;
     }
 
-    return true;
+    return payload;
   } catch {
-    return false;
+    return null;
   }
 }
 
+// Protected route groups
 const protectedRoutes = ["/dashboard", "/orders", "/menu", "/settings", "/billing"];
+const adminOnlyRoutes = ["/settings"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -57,24 +72,40 @@ export async function middleware(request: NextRequest) {
   const isProtected = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
   const isLoginPage = pathname === "/login";
 
-  let isAuthenticated = false;
+  let session: TokenPayload | null = null;
   if (token) {
-    isAuthenticated = await verifyEdgeToken(token);
+    session = await verifyEdgeToken(token);
   }
 
-  // If user tries to access protected route without valid authentication
-  if (isProtected && !isAuthenticated) {
+  // 1. Unauthenticated access to protected routes
+  if (isProtected && !session) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // If already authenticated user tries to visit login page, forward to dashboard
-  if (isLoginPage && isAuthenticated) {
+  // 2. Role-Based Route Protection (RBAC)
+  if (session && adminOnlyRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))) {
+    if (session.role !== "ADMIN") {
+      // Non-admins cannot access /settings
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
+  // 3. Already authenticated user trying to visit login page
+  if (isLoginPage && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  // Inject security headers on every response
+  response.headers.set("X-Frame-Options", "SAMEORIGIN");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+
+  return response;
 }
 
 export const config = {
