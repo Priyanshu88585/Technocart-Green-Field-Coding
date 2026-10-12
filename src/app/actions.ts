@@ -270,12 +270,10 @@ export async function recordPayment(data: unknown) {
 }
 
 export async function getSettings() {
-  let settings = await prisma.restaurantSettings.findUnique({
-    where: { id: "default" },
-  });
+  let settings = await prisma.restaurantSettings.findFirst();
   if (!settings) {
     settings = await prisma.restaurantSettings.create({
-      data: { id: "default" },
+      data: {},
     });
   }
   return settings;
@@ -286,11 +284,18 @@ export async function updateSettings(data: unknown) {
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message || "Invalid settings" };
   }
-  const settings = await prisma.restaurantSettings.upsert({
-    where: { id: "default" },
-    update: parsed.data,
-    create: { id: "default", ...parsed.data },
-  });
+  const current = await prisma.restaurantSettings.findFirst();
+  let settings;
+  if (current) {
+    settings = await prisma.restaurantSettings.update({
+      where: { id: current.id },
+      data: parsed.data,
+    });
+  } else {
+    settings = await prisma.restaurantSettings.create({
+      data: parsed.data,
+    });
+  }
   revalidatePath("/settings");
   revalidatePath("/billing");
   return { data: settings };

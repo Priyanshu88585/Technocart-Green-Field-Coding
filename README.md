@@ -1,6 +1,6 @@
 # The Grand Kitchen — Restaurant Management & Billing System
 
-A high-performance, full-stack Restaurant Management and Billing System built with **Next.js 16 (App Router)**, **React 19**, **Prisma ORM**, **SQLite**, **Tailwind CSS 4**, and **TypeScript**.
+A high-performance, full-stack Restaurant Management and Billing System built with **Next.js 16 (App Router)**, **React 19**, **Prisma ORM**, **MongoDB**, **Tailwind CSS 4**, and **TypeScript**.
 
 Developed for the **Technical Assessment: Restaurant Billing & Management System (One-Day Development Assignment)**.
 
@@ -74,7 +74,7 @@ The application models the end-to-end lifecycle of a high-volume restaurant:
 | **Framework** | Next.js 16.4.0 (App Router, Server Actions) |
 | **Frontend Library** | React 19, Framer Motion (animated toasts) |
 | **Styling** | Vanilla Tailwind CSS 4 with custom glassmorphism design tokens |
-| **Database** | SQLite (via Prisma ORM 5.22.0) |
+| **Database** | MongoDB (via Prisma ORM 5.22.0) |
 | **Validation** | Zod 4 for input schema enforcement |
 | **Currency Safety** | Integer-paise precision arithmetic (`100 paise = ₹1.00`) |
 
@@ -94,19 +94,23 @@ The application models the end-to-end lifecycle of a high-volume restaurant:
 
 ### Prerequisites
 - Node.js (v18.18.0 or later)
+- MongoDB Atlas cluster or local MongoDB instance
 - npm or pnpm
 
-### Step 1: Install Dependencies
+### Step 1: Install Dependencies & Configure Environment
 ```bash
 npm install
+
+# Copy environment variables and set your MongoDB connection string
+cp .env.example .env
 ```
 
-### Step 2: Set up Database & Seed Data
+### Step 2: Push Database Schema & Seed Data
 ```bash
-# Push schema to SQLite
+# Push schema to MongoDB (creates collections and indexes)
 npx prisma db push
 
-# Seed restaurant settings, 20+ authentic menu items, and initial orders
+# Seed restaurant settings, 24 authentic menu items, and initial demonstration orders
 node prisma/seed.js
 ```
 

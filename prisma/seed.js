@@ -31,34 +31,30 @@ const menuItems = [
 
 async function main() {
   console.log("Seeding restaurant settings...");
-  await prisma.restaurantSettings.upsert({
-    where: { id: "default" },
-    update: {
-      name: "The Grand Kitchen",
-      address: "123 Food Street, Culinary District, Mumbai - 400001",
-      phone: "+91 98765 43210",
-      email: "info@thegrandkitchen.com",
-      gstNumber: "27AABCU9603R1ZM",
-      currency: "INR",
-      currencySymbol: "₹",
-      defaultTax: 5,
-      defaultService: 0,
-      receiptFooter: "Thank you for dining with us! Visit again soon.",
-    },
-    create: {
-      id: "default",
-      name: "The Grand Kitchen",
-      address: "123 Food Street, Culinary District, Mumbai - 400001",
-      phone: "+91 98765 43210",
-      email: "info@thegrandkitchen.com",
-      gstNumber: "27AABCU9603R1ZM",
-      currency: "INR",
-      currencySymbol: "₹",
-      defaultTax: 5,
-      defaultService: 0,
-      receiptFooter: "Thank you for dining with us! Visit again soon.",
-    },
-  });
+  const existingSettings = await prisma.restaurantSettings.findFirst();
+  const settingsData = {
+    name: "The Grand Kitchen",
+    address: "123 Food Street, Culinary District, Mumbai - 400001",
+    phone: "+91 98765 43210",
+    email: "info@thegrandkitchen.com",
+    gstNumber: "27AABCU9603R1ZM",
+    currency: "INR",
+    currencySymbol: "₹",
+    defaultTax: 5,
+    defaultService: 0,
+    receiptFooter: "Thank you for dining with us! Visit again soon.",
+  };
+
+  if (existingSettings) {
+    await prisma.restaurantSettings.update({
+      where: { id: existingSettings.id },
+      data: settingsData,
+    });
+  } else {
+    await prisma.restaurantSettings.create({
+      data: settingsData,
+    });
+  }
 
   console.log("Upserting menu items...");
   const createdItems = [];
