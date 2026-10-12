@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model MenuItem {
+  id           String      @id @default(cuid())
+  name         String
+  description  String      @default("")
+  category     String
+  priceInPaise Int
+  available    Boolean     @default(true)
+  imageUrl     String      @default("")
+  sortOrder    Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  orderItems   OrderItem[]
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     Int         @unique
+  orderType       String      @default("dine-in")
+  tableNumber     String      @default("")
+  status          String      @default("active")
+  note            String      @default("")
+  subtotalInPaise Int         @default(0)
+  discountPercent Float       @default(0)
+  discountInPaise Int         @default(0)
+  taxPercent      Float       @default(5)
+  taxInPaise      Int         @default(0)
+  servicePercent  Float       @default(0)
+  serviceInPaise  Int         @default(0)
+  totalInPaise    Int         @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  completedAt     DateTime?
+  items           OrderItem[]
+  payments        Payment[]
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  menuItemId     String?
+  itemName       String
+  unitPriceInPaise Int
+  quantity       Int
+  lineTotalInPaise Int
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem       MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  orderId     String
+  amountInPaise Int
+  method      String
+  status      String   @default("completed")
+  reference   String   @default("")
+  createdAt   DateTime @default(now())
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model RestaurantSettings {
+  id              String @id @default("default")
+  name            String @default("The Grand Kitchen")
+  address         String @default("123 Food Street, Culinary District")
+  phone           String @default("+91 98765 43210")
+  email           String @default("info@thegrandkitchen.com")
+  gstNumber       String @default("")
+  currency        String @default("INR")
+  currencySymbol  String @default("₹")
+  defaultTax      Float  @default(5)
+  defaultService  Float  @default(0)
+  receiptFooter   String @default("Thank you for dining with us!")
+  updatedAt       DateTime @updatedAt
+}
