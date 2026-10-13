@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { logoutUser, getAuthUser } from "@/app/actions";
 import { useToast } from "@/components/ui/ToastProvider";
+import { ThemeToggle } from "@/components/theme";
 
 const navItems = [
   {
@@ -113,7 +114,7 @@ export function Sidebar() {
   return (
     <>
       <button
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-xl bg-surface-elevated border border-border shadow-lg"
+        className="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-xl bg-surface-elevated border border-border shadow-lg text-foreground cursor-pointer"
         onClick={() => setMobileOpen(true)}
         aria-label="Open navigation"
       >
@@ -130,12 +131,12 @@ export function Sidebar() {
       )}
 
       <aside
-        className={`no-print fixed lg:static inset-y-0 left-0 z-50 w-64 bg-background/95 backdrop-blur-xl border-r border-white/20 flex flex-col transition-transform duration-300 ease-out shrink-0 ${
+        className={`no-print fixed lg:static inset-y-0 left-0 z-50 w-64 bg-background/95 backdrop-blur-xl border-r border-border flex flex-col transition-transform duration-300 ease-out shrink-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}
       >
-        <div className="flex items-center gap-3 px-5 h-16 border-b border-white/20 shrink-0">
-          <div className="w-9 h-9 rounded-lg border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center shrink-0">
+        <div className="flex items-center gap-3 px-5 h-16 border-b border-border shrink-0">
+          <div className="w-9 h-9 rounded-lg border border-border bg-card/60 overflow-hidden flex items-center justify-center shrink-0">
             <Image
               src="/logo.png"
               alt="Restaurant Logo"
@@ -144,12 +145,13 @@ export function Sidebar() {
               className="w-full h-full object-contain p-0.5"
             />
           </div>
-          <div>
-            <h1 className="text-sm font-semibold tracking-tight text-white">The Grand Kitchen</h1>
-            <p className="text-[10px] font-mono text-white/40 tracking-widest uppercase">POS & CRM Core</p>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-sm font-semibold tracking-tight text-foreground truncate">The Grand Kitchen</h1>
+            <p className="text-[10px] font-mono text-muted-foreground tracking-widest uppercase">POS & CRM Core</p>
           </div>
+          <ThemeToggle className="ml-auto" />
           <button
-            className="ml-auto lg:hidden p-1 text-white/50 hover:text-white"
+            className="lg:hidden p-1 text-muted-foreground hover:text-foreground cursor-pointer"
             onClick={() => setMobileOpen(false)}
             aria-label="Close navigation"
           >
@@ -170,8 +172,8 @@ export function Sidebar() {
                 onClick={() => setMobileOpen(false)}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   active
-                    ? "bg-white text-black font-semibold shadow-sm"
-                    : "text-white/50 hover:text-white hover:bg-white/5 border border-transparent"
+                    ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent"
                 }`}
               >
                 {item.icon}
@@ -180,11 +182,11 @@ export function Sidebar() {
             );
           })}
 
-          <div className="pt-4 mt-4 border-t border-white/20">
+          <div className="pt-4 mt-4 border-t border-border">
             <Link
               href="/"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-mono text-white/40 hover:text-white hover:bg-white/5 border border-transparent transition-all"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted border border-transparent transition-all"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -195,18 +197,18 @@ export function Sidebar() {
           </div>
         </nav>
 
-        <div className="p-3.5 border-t border-white/20 bg-white/[0.02] space-y-3">
+        <div className="p-3.5 border-t border-border bg-card/40 space-y-3">
           <div className="flex items-center gap-3 px-1.5">
-            <div className="w-9 h-9 rounded-xl border border-white/25 bg-white/5 flex items-center justify-center text-xs font-mono font-bold text-white">
+            <div className="w-9 h-9 rounded-xl border border-border bg-muted flex items-center justify-center text-xs font-mono font-bold text-foreground">
               {user?.name ? user.name.slice(0, 2).toUpperCase() : "GM"}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-white truncate">
+              <p className="text-xs font-semibold text-foreground truncate">
                 {user?.name || "Priyanshu (Manager)"}
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
-                <span className="text-[10px] font-mono uppercase tracking-wider text-white/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(52,211,153,0.5)] animate-pulse" />
+                <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
                   {user?.role || "ADMIN"} • Active
                 </span>
               </div>
@@ -216,7 +218,7 @@ export function Sidebar() {
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40 text-white/80 hover:text-white text-xs font-medium transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-border bg-card hover:bg-muted text-foreground/80 hover:text-foreground text-xs font-medium transition-all disabled:opacity-50 cursor-pointer"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

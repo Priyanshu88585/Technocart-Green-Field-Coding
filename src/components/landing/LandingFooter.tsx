@@ -11,10 +11,10 @@ export function LandingFooter({
   address = "Plot 42, Bandra Kurla Complex, Mumbai",
 }: LandingFooterProps) {
   return (
-    <footer className="py-16 text-center border-t border-white/20 text-white/40 text-xs font-mono space-y-4">
+    <footer className="py-16 text-center border-t border-border text-muted-foreground text-xs font-mono space-y-4">
       <div className="max-w-[1500px] mx-auto px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-3">
-          <div className="w-7 h-7 rounded-lg border border-white/25 bg-black/40 overflow-hidden flex items-center justify-center shrink-0">
+          <div className="w-7 h-7 rounded-lg border border-border bg-card/60 overflow-hidden flex items-center justify-center shrink-0">
             <Image
               src="/logo.png"
               alt="The Grand Kitchen Logo"
@@ -23,16 +23,16 @@ export function LandingFooter({
               className="w-full h-full object-contain p-0.5"
             />
           </div>
-          <span className="font-bold text-white text-sm">{restaurantName}</span>
-          <span className="text-white/20">•</span>
+          <span className="font-bold text-foreground text-sm">{restaurantName}</span>
+          <span className="text-muted-foreground/30">•</span>
           <span>{address}</span>
         </div>
 
         <div className="flex items-center gap-6">
-          <Link href="/login" className="hover:text-white transition-colors underline underline-offset-4">
+          <Link href="/login" className="hover:text-foreground transition-colors underline underline-offset-4">
             Staff POS Terminal
           </Link>
-          <a href="#credentials" className="hover:text-white transition-colors">
+          <a href="#credentials" className="hover:text-foreground transition-colors">
             Access Keys
           </a>
         </div>

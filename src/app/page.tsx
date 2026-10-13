@@ -20,7 +20,7 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-white selection:text-black">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-primary-foreground transition-colors duration-200">
       <LandingNavbar restaurantName={settings?.name} />
       <HeroSection />
       <CredentialsSection />
